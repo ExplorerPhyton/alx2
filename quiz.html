@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>VitaFlow Hub - Mental Health Quiz</title>
+        <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+            body {
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                min-height: 100vh;
+                padding: 40px 20px;
+            }
+
+            .quiz-header {
+                text-align: center;
+                margin-bottom: 40px;
+                animation: fadeIn 0.6s ease-out;
+            }
+
+            .quiz-header h1 {
+                color: #2c3e50;
+                font-size: 2.2rem;
+                margin-bottom: 10px;
+            }
+
+            .quiz-header p {
+                color: #7f8c8d;
+                font-size: 1.1rem;
+            }
+
+            .quiz-container {
+                max-width: 700px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                padding: 50px;
+                animation: slideUp 0.5s ease-out;
+            }
+
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            .progress-bar {
+                width: 100%;
+                height: 6px;
+                background: #ecf0f1;
+                border-radius: 10px;
+                margin-bottom: 30px;
+                overflow: hidden;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #1abc9c 0%, #16a085 100%);
+                border-radius: 10px;
+                transition: width 0.3s ease;
+            }
+
+            .question-counter {
+                color: #7f8c8d;
+                font-size: 0.95rem;
+                margin-bottom: 20px;
+                font-weight: 600;
+            }
+
+            .quiz-question {
+                margin-bottom: 30px;
+                padding: 25px;
+                background: #f8f9fa;
+                border-left: 4px solid #3498db;
+                border-radius: 6px;
+                transition: all 0.3s ease;
+            }
+
+            .quiz-question:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+
+            .quiz-question label {
+                display: block;
+                font-weight: 700;
+                color: #2c3e50;
+                margin-bottom: 20px;
+                font-size: 1.05rem;
+                line-height: 1.6;
+            }
+
+            .radio-group {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .radio-option {
+                display: flex;
+                align-items: center;
+            }
+
+            .radio-option input[type="radio"] {
+                margin-right: 12px;
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+                accent-color: #1abc9c;
+            }
+
+            .radio-option label {
+                margin: 0;
+                font-weight: 500;
+                cursor: pointer;
+                color: #555;
+                font-size: 1rem;
+            }
+
+            .radio-option:hover label {
+                color: #1abc9c;
+            }
+
+            .button-group {
+                display: flex;
+                gap: 15px;
+                margin-top: 40px;
+                justify-content: center;
+            }
+
+            button {
+                padding: 12px 30px;
+                font-size: 1rem;
+                font-weight: 700;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .btn-back {
+                background: #ecf0f1;
+                color: #2c3e50;
+                border: 1px solid #bdc3c7;
+            }
+
+            .btn-back:hover {
+                background: #bdc3c7;
+            }
+
+            .btn-next,
+            .btn-submit {
+                background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+                color: white;
+                flex: 1;
+                max-width: 200px;
+            }
+
+            .btn-next:hover,
+            .btn-submit:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(26, 188, 156, 0.3);
+            }
+
+            .btn-next:disabled,
+            .btn-submit:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            .result-container {
+                display: none;
+                text-align: center;
+                padding: 40px 20px;
+                animation: slideUp 0.5s ease-out;
+            }
+
+            .result-score {
+                font-size: 3rem;
+                font-weight: 700;
+                color: #1abc9c;
+                margin-bottom: 15px;
+            }
+
+            .result-message {
+                font-size: 1.3rem;
+                color: #2c3e50;
+                margin-bottom: 30px;
+                line-height: 1.6;
+            }
+
+            .result-description {
+                font-size: 1rem;
+                color: #7f8c8d;
+                margin-bottom: 30px;
+                background: #f8f9fa;
+                padding: 20px;
+                border-radius: 6px;
+                line-height: 1.8;
+            }
+
+            .result-buttons {
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+                color: white;
+                padding: 12px 30px;
+                border-radius: 6px;
+                border: none;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(26, 188, 156, 0.3);
+            }
+
+            .btn-secondary {
+                background: white;
+                color: #1abc9c;
+                padding: 12px 30px;
+                border-radius: 6px;
+                border: 2px solid #1abc9c;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .btn-secondary:hover {
+                background: #f0fdf4;
+            }
+
+            .emergency-banner {
+                background: #e74c3c;
+                color: white;
+                padding: 12px;
+                text-align: center;
+                font-weight: bold;
+                font-size: 0.9rem;
+                margin-bottom: 20px;
+                border-radius: 6px;
+            }
+
+            .quiz-form {
+                display: block;
+            }
+
+            .quiz-form.hidden {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="quiz-header">
+            <h1>🧠 Mental Health Check-In Quiz</h1>
+            <p>
+                Take our 5-question assessment to evaluate your mental wellbeing
+            </p>
+        </div>
+
+        <div class="quiz-container">
+            <div class="emergency-banner">
+                ⚠️ Crisis Resources: If you're in crisis, please contact your
+                local emergency services or a crisis hotline immediately.
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="question-counter" id="questionCounter">
+                Question 1 of 5
+            </div>
+
+            <form id="quizForm" class="quiz-form">
+                <!-- Question 1 -->
+                <div class="quiz-question">
+                    <label for="q1">
+                        1. How interested have you been in doing your normal
+                        hobbies and activities over the last two weeks?
+                    </label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q1_0"
+                                name="q1"
+                                value="0"
+                                required
+                            />
+                            <label for="q1_0">Not at all interested</label>
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q1_1"
+                                name="q1"
+                                value="1"
+                            />
+                            <label for="q1_1"
+                                >Somewhat interested (several days)</label
+                            >
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q1_2"
+                                name="q1"
+                                value="2"
+                            />
+                            <label for="q1_2">Very interested (most days)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q1_3"
+                                name="q1"
+                                value="3"
+                            />
+                            <label for="q1_3"
+                                >Extremely interested (every day)</label
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="quiz-question">
+                    <label for="q2">
+                        2. How often have you felt down, depressed, or hopeless
+                        recently?
+                    </label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q2_0"
+                                name="q2"
+                                value="0"
+                                required
+                            />
+                            <label for="q2_0">Not at all</label>
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q2_1"
+                                name="q2"
+                                value="1"
+                            />
+                            <label for="q2_1">Several days</label>
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q2_2"
+                                name="q2"
+                                value="2"
+                            />
+                            <label for="q2_2">More than half the days</label>
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q2_3"
+                                name="q2"
+                                value="3"
+                            />
+                            <label for="q2_3">Nearly every day</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="quiz-question">
+                    <label for="q3">
+                        3. How are your sleep patterns? (trouble falling asleep,
+                        staying asleep, or oversleeping)
+                    </label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q3_0"
+                                name="q3"
+                                value="0"
+                                required
+                            />
+                            <label for="q3_0">Sleep is normal and healthy</label>
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q3_1"
+                                name="q3"
+                                value="1"
+                            />
+                            <label for="q3_1"
+                                >Occasional sleep issues (several days)</label
+                            >
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q3_2"
+                                name="q3"
+                                value="2"
+                            />
+                            <label for="q3_2"
+                                >Frequent sleep problems (more than half the
+                                days)</label
+                            >
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q3_3"
+                                name="q3"
+                                value="3"
+                            />
+                            <label for="q3_3">Severe sleep issues (almost daily)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="quiz-question">
+                    <label for="q4">
+                        4. How is your energy level? Do you feel sluggish,
+                        fatigued, or low on energy?
+                    </label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q4_0"
+                                name="q4"
+                                value="0"
+                                required
+                            />
+                            <label for="q4_0">Full of energy</label>
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q4_1"
+                                name="q4"
+                                value="1"
+                            />
+                            <label for="q4_1"
+                                >Somewhat fatigued (several days)</label
+                            >
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q4_2"
+                                name="q4"
+                                value="2"
+                            />
+                            <label for="q4_2"
+                                >Often fatigued (more than half the days)</label
+                            >
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q4_3"
+                                name="q4"
+                                value="3"
+                            />
+                            <label for="q4_3">Severely fatigued (almost daily)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="quiz-question">
+                    <label for="q5">
+                        5. How is your concentration? Do you have trouble
+                        focusing on tasks or reading?
+                    </label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q5_0"
+                                name="q5"
+                                value="0"
+                                required
+                            />
+                            <label for="q5_0">Concentration is excellent</label>
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q5_1"
+                                name="q5"
+                                value="1"
+                            />
+                            <label for="q5_1">Occasional focus issues</label>
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q5_2"
+                                name="q5"
+                                value="2"
+                            />
+                            <label for="q5_2"
+                                >Frequent concentration problems</label
+                            >
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                type="radio"
+                                id="q5_3"
+                                name="q5"
+                                value="3"
+                            />
+                            <label for="q5_3"
+                                >Severe difficulty concentrating</label
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn-back" onclick="goHome()">
+                        Back
+                    </button>
+                    <button type="submit" class="btn-submit">
+                        Submit Quiz
+                    </button>
+                </div>
+            </form>
+
+            <div class="result-container" id="resultContainer">
+                <div class="result-score" id="resultScore">15</div>
+                <div class="result-message" id="resultMessage">
+                    Your Mental Wellness Score
+                </div>
+                <div class="result-description" id="resultDescription">
+                    Based on your answers, here are some recommendations...
+                </div>
+                <div class="result-buttons">
+                    <button class="btn-primary" onclick="location.href='main.html'">
+                        Return to Dashboard
+                    </button>
+                    <button class="btn-secondary" onclick="retakeQuiz()">
+                        Retake Quiz
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const quizForm = document.getElementById("quizForm");
+            const resultContainer = document.getElementById("resultContainer");
+
+            quizForm.addEventListener("submit", handleQuizSubmit);
+
+            function updateProgress() {
+                const answered = Array.from(
+                    document.querySelectorAll('input[type="radio"]:checked')
+                ).length;
+                const progress = (answered / 5) * 100;
+                document.getElementById("progressFill").style.width =
+                    progress + "%";
+            }
+
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener("change", updateProgress);
+            });
+
+            function handleQuizSubmit(event) {
+                event.preventDefault();
+
+                // Calculate score
+                let score = 0;
+                for (let i = 1; i <= 5; i++) {
+                    const value = document.querySelector(
+                        `input[name="q${i}"]:checked`
+                    )?.value;
+                    if (value) {
+                        score += parseInt(value);
+                    }
+                }
+
+                // Show results
+                showResults(score);
+            }
+
+            function showResults(score) {
+                quizForm.style.display = "none";
+                resultContainer.style.display = "block";
+
+                const maxScore = 15;
+                const percentage = Math.round((score / maxScore) * 100);
+
+                document.getElementById("resultScore").textContent = score;
+
+                if (score <= 5) {
+                    document.getElementById("resultMessage").textContent =
+                        "Excellent Mental Health";
+                    document.getElementById("resultDescription").textContent =
+                        "Your responses indicate strong mental wellbeing. Keep maintaining healthy habits like regular exercise, good sleep, and social connections.";
+                } else if (score <= 10) {
+                    document.getElementById("resultMessage").textContent =
+                        "Good Mental Health with Minor Concerns";
+                    document.getElementById("resultDescription").textContent =
+                        "You're doing well overall, but there are a few areas where support might help. Consider reaching out to a counselor or trying mindfulness practices.";
+                } else {
+                    document.getElementById("resultMessage").textContent =
+                        "Significant Mental Health Concerns";
+                    document.getElementById("resultDescription").textContent =
+                        "Your responses suggest you may benefit from professional support. We recommend scheduling a consultation with a mental health professional. Resources are available to help.";
+                }
+
+                document.getElementById("progressFill").style.width = "100%";
+            }
+
+            function retakeQuiz() {
+                quizForm.reset();
+                resultContainer.style.display = "none";
+                quizForm.style.display = "block";
+                document.getElementById("progressFill").style.width = "0%";
+            }
+
+            function goHome() {
+                window.location.href = "main.html";
+            }
+        </script>
+    </body>
+</html>

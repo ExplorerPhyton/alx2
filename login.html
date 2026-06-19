@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>VitaFlow Hub - Login</title>
+        <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+            body {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            }
+
+            .login-container {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                max-width: 450px;
+                width: 100%;
+                padding: 50px 40px;
+                animation: slideUp 0.5s ease-out;
+            }
+
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .logo-section {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .logo-section h1 {
+                color: #1abc9c;
+                font-size: 2rem;
+                margin-bottom: 10px;
+            }
+
+            .logo-section p {
+                color: #7f8c8d;
+                font-size: 0.9rem;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 600;
+                color: #2c3e50;
+                font-size: 0.95rem;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="password"] {
+                width: 100%;
+                padding: 12px 15px;
+                border: 2px solid #ecf0f1;
+                border-radius: 6px;
+                font-size: 1rem;
+                transition: border-color 0.3s;
+                background: #fafafa;
+            }
+
+            input[type="text"]:focus,
+            input[type="email"]:focus,
+            input[type="password"]:focus {
+                outline: none;
+                border-color: #1abc9c;
+                background: white;
+            }
+
+            .forgot-password {
+                text-align: right;
+                margin-bottom: 20px;
+            }
+
+            .forgot-password a {
+                color: #1abc9c;
+                text-decoration: none;
+                font-size: 0.9rem;
+                font-weight: 600;
+            }
+
+            .forgot-password a:hover {
+                text-decoration: underline;
+            }
+
+            .submit-btn {
+                width: 100%;
+                padding: 12px;
+                background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-size: 1rem;
+                font-weight: 700;
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;
+            }
+
+            .submit-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(26, 188, 156, 0.3);
+            }
+
+            .submit-btn:active {
+                transform: translateY(0);
+            }
+
+            .toggle-form {
+                text-align: center;
+                margin-top: 20px;
+                color: #7f8c8d;
+                font-size: 0.95rem;
+            }
+
+            .toggle-form a {
+                color: #1abc9c;
+                cursor: pointer;
+                font-weight: 700;
+                text-decoration: none;
+            }
+
+            .toggle-form a:hover {
+                text-decoration: underline;
+            }
+
+            #signInForm,
+            #signUpForm {
+                display: block;
+            }
+
+            .hidden-form {
+                display: none;
+            }
+
+            .divider {
+                margin: 25px 0;
+                text-align: center;
+                color: #bdc3c7;
+                font-size: 0.9rem;
+            }
+
+            .social-login {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+
+            .social-btn {
+                flex: 1;
+                padding: 10px;
+                border: 1px solid #ecf0f1;
+                background: #f8f9fa;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+                color: #2c3e50;
+                transition: background 0.3s;
+            }
+
+            .social-btn:hover {
+                background: #ecf0f1;
+            }
+
+            .error-message {
+                color: #e74c3c;
+                font-size: 0.9rem;
+                margin-top: 5px;
+                display: none;
+            }
+
+            .success-message {
+                color: #27ae60;
+                font-size: 0.9rem;
+                margin-bottom: 15px;
+                display: none;
+                background: #f0fdf4;
+                padding: 10px;
+                border-radius: 4px;
+                border-left: 3px solid #27ae60;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="login-container">
+            <div class="logo-section">
+                <h1>🏥 VitaFlow</h1>
+                <p>Your Integrated Health & Wellness Portal</p>
+            </div>
+
+            <!-- Sign In Form -->
+            <div id="signInContainer">
+                <div class="success-message" id="successMessage"></div>
+                <form id="signInForm" onsubmit="handleSignIn(event)">
+                    <h2 style="color: #2c3e50; margin-bottom: 25px; font-size: 1.5rem">
+                        Welcome Back
+                    </h2>
+
+                    <div class="form-group">
+                        <label for="faydaId">Fayda National ID</label>
+                        <input
+                            type="text"
+                            id="faydaId"
+                            placeholder="Enter your Fayda ID"
+                            required
+                        />
+                        <div class="error-message"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signinPassword">Password</label>
+                        <input
+                            type="password"
+                            id="signinPassword"
+                            placeholder="••••••••"
+                            required
+                        />
+                        <div class="error-message"></div>
+                    </div>
+
+                    <div class="forgot-password">
+                        <a href="#">Forgot your password?</a>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        Sign Into Account
+                    </button>
+                </form>
+
+                <div class="divider">OR</div>
+
+                <div class="social-login">
+                    <button class="social-btn">Google</button>
+                    <button class="social-btn">Microsoft</button>
+                    <button class="social-btn">Apple</button>
+                </div>
+
+                <div class="toggle-form">
+                    Don't have an account?
+                    <a onclick="toggleAuthForms(true)">Create one here</a>
+                </div>
+            </div>
+
+            <!-- Sign Up Form -->
+            <div id="signUpContainer" class="hidden-form">
+                <form id="signUpForm" onsubmit="handleSignUp(event)">
+                    <h2 style="color: #2c3e50; margin-bottom: 25px; font-size: 1.5rem">
+                        Create Account
+                    </h2>
+
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input
+                            type="text"
+                            id="fullName"
+                            placeholder="John Doe"
+                            required
+                        />
+                        <div class="error-message"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="faydaIdSignup">Fayda National ID</label>
+                        <input
+                            type="text"
+                            id="faydaIdSignup"
+                            placeholder="Enter your Fayda ID"
+                            required
+                        />
+                        <div class="error-message"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signupPassword">Create Password</label>
+                        <input
+                            type="password"
+                            id="signupPassword"
+                            placeholder="Minimum 6 characters"
+                            required
+                        />
+                        <div class="error-message"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            placeholder="Re-enter password"
+                            required
+                        />
+                        <div class="error-message"></div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%)">
+                        Complete Registration
+                    </button>
+                </form>
+
+                <div class="toggle-form">
+                    Already have an account?
+                    <a onclick="toggleAuthForms(false)">Sign In</a>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function toggleAuthForms(showSignUp) {
+                const signInContainer = document.getElementById("signInContainer");
+                const signUpContainer = document.getElementById("signUpContainer");
+
+                if (signInContainer && signUpContainer) {
+                    signInContainer.style.display = showSignUp ? "none" : "block";
+                    signUpContainer.style.display = showSignUp ? "block" : "none";
+                }
+            }
+
+            function setFieldError(input, message) {
+                if (!input) return;
+                const errorEl = input.parentElement.querySelector('.error-message');
+                if (errorEl) {
+                    errorEl.textContent = message;
+                    errorEl.style.display = message ? 'block' : 'none';
+                }
+            }
+
+            function clearFieldErrors(form) {
+                if (!form) return;
+                form.querySelectorAll('.error-message').forEach(el => {
+                    el.textContent = '';
+                    el.style.display = 'none';
+                });
+            }
+
+            function validateFaydaId(value) {
+                return /^[A-Za-z0-9]{6,}$/.test(value);
+            }
+
+            function validatePassword(value) {
+                return value.length >= 6;
+            }
+
+            function validateFullName(value) {
+                return value.trim().length >= 3;
+            }
+
+            function handleSignIn(event) {
+                event.preventDefault();
+                const form = document.getElementById('signInForm');
+                clearFieldErrors(form);
+
+                const faydaIdInput = document.getElementById('faydaId');
+                const passwordInput = document.getElementById('signinPassword');
+                const faydaId = faydaIdInput.value.trim();
+                const password = passwordInput.value;
+                let valid = true;
+
+                if (!validateFaydaId(faydaId)) {
+                    setFieldError(faydaIdInput, 'Fayda ID must be at least 6 alphanumeric characters.');
+                    valid = false;
+                }
+
+                if (!validatePassword(password)) {
+                    setFieldError(passwordInput, 'Password must be at least 6 characters long.');
+                    valid = false;
+                }
+
+                if (!valid) return;
+
+                const successMsg = document.getElementById('successMessage');
+                successMsg.textContent = '✓ Login successful! Redirecting...';
+                successMsg.style.display = 'block';
+
+                setTimeout(() => {
+                    window.location.href = 'main.html';
+                }, 1500);
+            }
+
+            function handleSignUp(event) {
+                event.preventDefault();
+                const form = document.getElementById('signUpForm');
+                clearFieldErrors(form);
+
+                const fullNameInput = document.getElementById('fullName');
+                const faydaIdInput = document.getElementById('faydaIdSignup');
+                const passwordInput = document.getElementById('signupPassword');
+                const confirmPasswordInput = document.getElementById('confirmPassword');
+
+                const fullName = fullNameInput.value.trim();
+                const faydaId = faydaIdInput.value.trim();
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                let valid = true;
+
+                if (!validateFullName(fullName)) {
+                    setFieldError(fullNameInput, 'Please enter your full name.');
+                    valid = false;
+                }
+
+                if (!validateFaydaId(faydaId)) {
+                    setFieldError(faydaIdInput, 'Fayda ID must be at least 6 alphanumeric characters.');
+                    valid = false;
+                }
+
+                if (!validatePassword(password)) {
+                    setFieldError(passwordInput, 'Password must be at least 6 characters long.');
+                    valid = false;
+                }
+
+                if (password !== confirmPassword) {
+                    setFieldError(confirmPasswordInput, 'Passwords do not match.');
+                    valid = false;
+                }
+
+                if (!valid) return;
+
+                alert(`Account created for ${fullName}! You can now sign in with your Fayda ID: ${faydaId}`);
+                toggleAuthForms(false);
+            }
+
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', () => setFieldError(input, ''));
+            });
+        </script>
+    </body>
+</html>

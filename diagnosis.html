@@ -1,0 +1,978 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>VitaFlow - Physical Diagnosis</title>
+        <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+            body {
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                min-height: 100vh;
+                padding: 40px 20px;
+            }
+
+            .diagnosis-header {
+                text-align: center;
+                margin-bottom: 40px;
+                animation: fadeIn 0.6s ease-out;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .language-selector {
+                display: flex;
+                gap: 10px;
+            }
+
+            .language-btn {
+                padding: 8px 15px;
+                border: 2px solid #ecf0f1;
+                background: #f8f9fa;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 0.9rem;
+                transition: all 0.3s;
+                color: #2c3e50;
+            }
+
+            .language-btn:hover {
+                border-color: #1abc9c;
+            }
+
+            .language-btn.active {
+                background: #1abc9c;
+                color: white;
+                border-color: #1abc9c;
+            }
+
+            .header-content {
+                flex: 1;
+            }
+
+            .diagnosis-header h1 {
+                color: #2c3e50;
+                font-size: 2.2rem;
+                margin-bottom: 10px;
+            }
+
+            .diagnosis-header p {
+                color: #7f8c8d;
+                font-size: 1.1rem;
+            }
+
+            .diagnosis-container {
+                max-width: 800px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                padding: 50px;
+                animation: slideUp 0.5s ease-out;
+            }
+
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            .gender-selection {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                margin-bottom: 40px;
+            }
+
+            .gender-btn {
+                padding: 30px;
+                border: 2px solid #ecf0f1;
+                background: #f8f9fa;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 1.1rem;
+                font-weight: 700;
+                transition: all 0.3s ease;
+                color: #2c3e50;
+            }
+
+            .gender-btn:hover {
+                border-color: #1abc9c;
+                background: #e8f8f5;
+                transform: translateY(-3px);
+            }
+
+            .gender-btn.active {
+                background: #1abc9c;
+                color: white;
+                border-color: #1abc9c;
+            }
+
+            .symptom-section {
+                display: none;
+            }
+
+            .symptom-section.active {
+                display: block;
+                animation: slideUp 0.5s ease-out;
+            }
+
+            .symptom-title {
+                font-size: 1.5rem;
+                color: #2c3e50;
+                margin-bottom: 25px;
+                text-align: center;
+            }
+
+            .symptom-question {
+                margin-bottom: 25px;
+                padding: 20px;
+                background: #f8f9fa;
+                border-radius: 8px;
+                border-left: 4px solid #3498db;
+            }
+
+            .symptom-question label {
+                display: block;
+                font-weight: 700;
+                color: #2c3e50;
+                margin-bottom: 15px;
+                font-size: 1rem;
+            }
+
+            .symptom-options {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .symptom-option {
+                display: flex;
+                align-items: center;
+            }
+
+            .symptom-option input[type="checkbox"],
+            .symptom-option input[type="radio"] {
+                margin-right: 12px;
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+                accent-color: #1abc9c;
+            }
+
+            .symptom-option label {
+                margin: 0;
+                font-weight: 500;
+                cursor: pointer;
+                color: #555;
+                font-size: 0.95rem;
+            }
+
+            .symptom-option:hover label {
+                color: #1abc9c;
+            }
+
+            .severity-scale {
+                display: flex;
+                gap: 10px;
+                margin-top: 10px;
+            }
+
+            .severity-btn {
+                flex: 1;
+                padding: 10px;
+                border: 1px solid #ddd;
+                background: white;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.3s;
+                font-weight: 600;
+            }
+
+            .severity-btn:hover {
+                border-color: #1abc9c;
+            }
+
+            .severity-btn.selected {
+                background: #1abc9c;
+                color: white;
+                border-color: #1abc9c;
+            }
+
+            .button-group {
+                display: flex;
+                gap: 15px;
+                margin-top: 40px;
+                justify-content: center;
+            }
+
+            button {
+                padding: 12px 30px;
+                font-size: 1rem;
+                font-weight: 700;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .btn-back {
+                background: #ecf0f1;
+                color: #2c3e50;
+                border: 1px solid #bdc3c7;
+            }
+
+            .btn-back:hover {
+                background: #bdc3c7;
+            }
+
+            .btn-submit {
+                background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+                color: white;
+                flex: 1;
+                max-width: 200px;
+            }
+
+            .btn-submit:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(26, 188, 156, 0.3);
+            }
+
+            .btn-submit:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            .result-container {
+                display: none;
+                text-align: center;
+                padding: 40px 20px;
+                animation: slideUp 0.5s ease-out;
+            }
+
+            .result-container.active {
+                display: block;
+            }
+
+            .diagnosis-result {
+                background: linear-gradient(135deg, #e8f8f5 0%, #f0fdf4 100%);
+                padding: 30px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }
+
+            .disease-name {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #1abc9c;
+                margin-bottom: 10px;
+            }
+
+            .confidence-score {
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: #27ae60;
+                margin-bottom: 15px;
+            }
+
+            .confidence-bar {
+                width: 100%;
+                height: 8px;
+                background: #ecf0f1;
+                border-radius: 10px;
+                overflow: hidden;
+                margin-bottom: 15px;
+            }
+
+            .confidence-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #1abc9c 0%, #27ae60 100%);
+                border-radius: 10px;
+            }
+
+            .description {
+                color: #2c3e50;
+                font-size: 1rem;
+                line-height: 1.8;
+                margin-bottom: 20px;
+            }
+
+            .disclaimer {
+                background: #fff3cd;
+                border: 1px solid #ffc107;
+                color: #856404;
+                padding: 15px;
+                border-radius: 6px;
+                margin-bottom: 20px;
+                font-size: 0.9rem;
+                line-height: 1.6;
+            }
+
+            .recommendations {
+                background: #f0fdf4;
+                border: 1px solid #22c55e;
+                color: #166534;
+                padding: 15px;
+                border-radius: 6px;
+                margin-bottom: 20px;
+                font-size: 0.9rem;
+                line-height: 1.6;
+                text-align: left;
+            }
+
+            .result-buttons {
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+                color: white;
+                padding: 12px 30px;
+                border-radius: 6px;
+                border: none;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(26, 188, 156, 0.3);
+            }
+
+            .btn-secondary {
+                background: white;
+                color: #1abc9c;
+                padding: 12px 30px;
+                border-radius: 6px;
+                border: 2px solid #1abc9c;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .btn-secondary:hover {
+                background: #f0fdf4;
+            }
+
+            .emergency-banner {
+                background: #e74c3c;
+                color: white;
+                padding: 12px;
+                text-align: center;
+                font-weight: bold;
+                font-size: 0.9rem;
+                margin-bottom: 20px;
+                border-radius: 6px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="diagnosis-header">
+            <div class="header-content">
+                <h1>🏥 <span id="titleText">Physical Diagnosis Assistant</span></h1>
+                <p id="subtitleText">Answer questions about your symptoms to get a diagnosis assessment</p>
+            </div>
+            <div class="language-selector">
+                <button class="language-btn active" onclick="switchLanguage('en')">English</button>
+                <button class="language-btn" onclick="switchLanguage('am')">አማርኛ</button>
+            </div>
+        </div>
+
+        <div class="diagnosis-container">
+            <div class="emergency-banner">
+                ⚠️ DISCLAIMER: This tool is for educational purposes only and is not a substitute for professional medical advice. Always consult a doctor.
+            </div>
+
+            <!-- Gender Selection -->
+            <div id="genderSelection">
+                <h3 style="text-align: center; margin-bottom: 20px; color: #2c3e50">
+                    Select Your Gender
+                </h3>
+                <div class="gender-selection">
+                    <button class="gender-btn" onclick="selectGender('male')">
+                        👨 Male
+                    </button>
+                    <button class="gender-btn" onclick="selectGender('female')">
+                        👩 Female
+                    </button>
+                </div>
+            </div>
+
+            <!-- Male Diagnosis Section -->
+            <div id="maleDiagnosis" class="symptom-section">
+                <div class="symptom-title">👨 Male Health Assessment</div>
+                <form id="maleForm" onsubmit="submitDiagnosis(event, 'male')">
+                    <div class="symptom-question">
+                        <label id="maleLocationLabel">Where is your pain or discomfort located?</label>
+                        <div class="symptom-options">
+                            <div class="symptom-option">
+                                <input type="checkbox" id="m_chest" name="location" value="chest" />
+                                <label id="m_chest_label" for="m_chest">Chest Pain</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="m_headache" name="location" value="head" />
+                                <label id="m_headache_label" for="m_headache">Headache / Head Pain</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="m_stomach" name="location" value="stomach" />
+                                <label id="m_stomach_label" for="m_stomach">Stomach / Abdominal Pain</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="m_back" name="location" value="back" />
+                                <label id="m_back_label" for="m_back">Back Pain</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="m_joint" name="location" value="joint" />
+                                <label id="m_joint_label" for="m_joint">Joint / Muscle Pain</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="symptom-question">
+                        <label id="maleSymptomsLabel">Additional Symptoms?</label>
+                        <div class="symptom-options">
+                            <div class="symptom-option">
+                                <input type="checkbox" id="m_fever" name="symptoms" value="fever" />
+                                <label id="m_fever_label" for="m_fever">Fever</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="m_cough" name="symptoms" value="cough" />
+                                <label id="m_cough_label" for="m_cough">Cough</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="m_nausea" name="symptoms" value="nausea" />
+                                <label id="m_nausea_label" for="m_nausea">Nausea / Vomiting</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="m_fatigue" name="symptoms" value="fatigue" />
+                                <label id="m_fatigue_label" for="m_fatigue">Fatigue</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="m_dizziness" name="symptoms" value="dizziness" />
+                                <label id="m_dizziness_label" for="m_dizziness">Dizziness / Vertigo</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="symptom-question">
+                        <label id="maleDurationLabel">How long have you had these symptoms?</label>
+                        <div class="symptom-options">
+                            <div class="symptom-option">
+                                <input type="radio" id="m_duration_acute" name="duration" value="acute" required />
+                                <label id="m_acute_label" for="m_duration_acute">Less than 24 hours</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="radio" id="m_duration_recent" name="duration" value="recent" />
+                                <label id="m_recent_label" for="m_duration_recent">1-7 days</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="radio" id="m_duration_chronic" name="duration" value="chronic" />
+                                <label id="m_chronic_label" for="m_duration_chronic">More than a week</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="symptom-question">
+                        <label id="maleSeverityLabel">Pain Severity (1-10)</label>
+                        <div class="severity-scale">
+                            <button type="button" class="severity-btn" onclick="setSeverity(this, 'm_severity', 1)">1</button>
+                            <button type="button" class="severity-btn" onclick="setSeverity(this, 'm_severity', 2)">2</button>
+                            <button type="button" class="severity-btn" onclick="setSeverity(this, 'm_severity', 3)">3</button>
+                            <button type="button" class="severity-btn" onclick="setSeverity(this, 'm_severity', 4)">4</button>
+                            <button type="button" class="severity-btn" onclick="setSeverity(this, 'm_severity', 5)">5</button>
+                        </div>
+                        <input type="hidden" id="m_severity" name="severity" value="3" />
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn-back" onclick="goHome()">Back</button>
+                        <button type="submit" class="btn-submit">Get Diagnosis</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Female Diagnosis Section -->
+            <div id="femaleDiagnosis" class="symptom-section">
+                <div class="symptom-title">👩 Female Health Assessment</div>
+                <form id="femaleForm" onsubmit="submitDiagnosis(event, 'female')">
+                    <div class="symptom-question">
+                        <label id="femaleLocationLabel">Where is your pain or discomfort located?</label>
+                        <div class="symptom-options">
+                            <div class="symptom-option">
+                                <input type="checkbox" id="f_chest" name="location" value="chest" />
+                                <label id="f_chest_label" for="f_chest">Chest Pain</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="f_headache" name="location" value="head" />
+                                <label id="f_headache_label" for="f_headache">Headache / Head Pain</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="f_stomach" name="location" value="stomach" />
+                                <label id="f_stomach_label" for="f_stomach">Stomach / Abdominal Pain</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="f_pelvis" name="location" value="pelvis" />
+                                <label id="f_pelvis_label" for="f_pelvis">Pelvic / Lower Abdominal Pain</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="f_breast" name="location" value="breast" />
+                                <label id="f_breast_label" for="f_breast">Breast Pain</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="symptom-question">
+                        <label id="femaleSymptomsLabel">Additional Symptoms?</label>
+                        <div class="symptom-options">
+                            <div class="symptom-option">
+                                <input type="checkbox" id="f_fever" name="symptoms" value="fever" />
+                                <label id="f_fever_label" for="f_fever">Fever</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="f_bleeding" name="symptoms" value="bleeding" />
+                                <label id="f_bleeding_label" for="f_bleeding">Abnormal Bleeding</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="f_nausea" name="symptoms" value="nausea" />
+                                <label id="f_nausea_label" for="f_nausea">Nausea / Vomiting</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="f_discharge" name="symptoms" value="discharge" />
+                                <label id="f_discharge_label" for="f_discharge">Unusual Discharge</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="checkbox" id="f_fatigue" name="symptoms" value="fatigue" />
+                                <label id="f_fatigue_label" for="f_fatigue">Fatigue</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="symptom-question">
+                        <label id="femaleDurationLabel">How long have you had these symptoms?</label>
+                        <div class="symptom-options">
+                            <div class="symptom-option">
+                                <input type="radio" id="f_duration_acute" name="duration" value="acute" required />
+                                <label id="f_acute_label" for="f_duration_acute">Less than 24 hours</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="radio" id="f_duration_recent" name="duration" value="recent" />
+                                <label id="f_recent_label" for="f_duration_recent">1-7 days</label>
+                            </div>
+                            <div class="symptom-option">
+                                <input type="radio" id="f_duration_chronic" name="duration" value="chronic" />
+                                <label id="f_chronic_label" for="f_duration_chronic">More than a week</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="symptom-question">
+                        <label id="femaleSeverityLabel">Pain Severity (1-10)</label>
+                        <div class="severity-scale">
+                            <button type="button" class="severity-btn" onclick="setSeverity(this, 'f_severity', 1)">1</button>
+                            <button type="button" class="severity-btn" onclick="setSeverity(this, 'f_severity', 2)">2</button>
+                            <button type="button" class="severity-btn" onclick="setSeverity(this, 'f_severity', 3)">3</button>
+                            <button type="button" class="severity-btn" onclick="setSeverity(this, 'f_severity', 4)">4</button>
+                            <button type="button" class="severity-btn" onclick="setSeverity(this, 'f_severity', 5)">5</button>
+                        </div>
+                        <input type="hidden" id="f_severity" name="severity" value="3" />
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn-back" onclick="goHome()">Back</button>
+                        <button type="submit" class="btn-submit">Get Diagnosis</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultContainer" class="result-container">
+                <div class="diagnosis-result">
+                    <div class="disease-name" id="diseaseName">Migraine Headache</div>
+                    <div class="confidence-score" id="confidenceScore">78% Confidence</div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidenceFill" style="width: 78%"></div>
+                    </div>
+                    <div class="description" id="diseaseDescription">
+                        Based on your symptoms, this condition is likely.
+                    </div>
+                </div>
+
+                <div class="disclaimer">
+                    <strong>⚠️ Important:</strong> This is an AI-powered assessment tool and should not replace professional medical diagnosis. Please consult with a healthcare provider for accurate diagnosis and treatment.
+                </div>
+
+                <div class="recommendations">
+                    <strong>✓ Recommendations:</strong>
+                    <div id="recommendations"></div>
+                </div>
+
+                <div class="result-buttons">
+                    <button class="btn-primary" onclick="location.href='main.html'">
+                        Return to Dashboard
+                    </button>
+                    <button class="btn-secondary" onclick="retakeDiagnosis()">
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let currentGender = null;
+            let currentLanguage = "en";
+            let activeDiagnosisData = null; // Caches calculated layout result object values
+
+            const translations = {
+                en: {
+                    title: "Physical Diagnosis Assistant",
+                    subtitle: "Answer questions about your symptoms to get a diagnosis assessment",
+                    selectGender: "Select Your Gender",
+                    male: "Male",
+                    female: "Female",
+                    maleAssessment: "Male Health Assessment",
+                    femaleAssessment: "Female Health Assessment",
+                    disclaimer: "⚠️ DISCLAIMER: This tool is for educational purposes only and is not a substitute for professional medical advice. Always consult a doctor.",
+                    recommendations: "✓ Recommendations:",
+                    retryButton: "Try Again",
+                    backButton: "Back",
+                    diagnosisButton: "Get Diagnosis",
+                    locationLabel: "Where is your pain or discomfort located?",
+                    symptomsLabel: "Additional Symptoms?",
+                    durationLabel: "How long have you had these symptoms?",
+                    severityLabel: "Pain Severity (1-5)",
+                    lessThan24h: "Less than 24 hours",
+                    oneToSevenDays: "1-7 days",
+                    moreThanWeek: "More than a week",
+                    chestPain: "Chest Pain",
+                    headache: "Headache / Head Pain",
+                    stomachPain: "Stomach / Abdominal Pain",
+                    backPain: "Back Pain",
+                    jointPain: "Joint / Muscle Pain",
+                    fever: "Fever",
+                    cough: "Cough",
+                    nausea: "Nausea / Vomiting",
+                    fatigue: "Fatigue",
+                    dizziness: "Dizziness / Vertigo",
+                    pelviPain: "Pelvic / Lower Abdominal Pain",
+                    breastPain: "Breast Pain",
+                    abnormalBleeding: "Abnormal Bleeding",
+                    discharge: "Unusual Discharge",
+                    confidenceText: "Confidence",
+                    important: "⚠️ Important:",
+                    medicalDisclaimer: "This is an AI-powered assessment tool and should not replace professional medical diagnosis. Please consult with a healthcare provider for accurate diagnosis and treatment.",
+                    returnButton: "Return to Dashboard"
+                },
+                am: {
+                    title: "የአካል ምርመራ ረዳት",
+                    subtitle: "ስለ ህመምዎ ምልክቶች ጥያቄዎችን በመመለስ የበሽታ መገመገሚያ ትንበያ ያግኙ",
+                    selectGender: "እባክዎን ጾታዎን ይምረጡ",
+                    male: "ወንድ",
+                    female: "ሴት",
+                    maleAssessment: "የወንዶች ጤና ምርመራ ግምገማ",
+                    femaleAssessment: "የሴቶች ጤና ምርመራ ግምገማ",
+                    disclaimer: "⚠️ ማስጠንቀቂያ - ይህ መሣሪያ ለትምህርት ዓላማዎች ብቻ የሚያገለግል ነው። የባለሙያ ሕክምና ምክርን አይተካም። ሁል ጊዜ ሐኪም ያማክሩ።",
+                    recommendations: "✓ የሚመከሩ ተግባራት:",
+                    retryButton: "እንደገና ሞክር",
+                    backButton: "ተመለስ",
+                    diagnosisButton: "ምርመራውን አውጣ",
+                    locationLabel: "የሕመምዎ ወይም ምቾት ማጣትዎ ቦታ የት ነው?",
+                    symptomsLabel: "ተጨማሪ ሌሎች ምልክቶች?",
+                    durationLabel: "እነዚህ ምልክቶች ከታዩ ምን ያህል ጊዜ ሆናቸው?",
+                    severityLabel: "የሕመም ክብደት ደረጃ (1-5)",
+                    lessThan24h: "ከ 24 ሰዓታት በታች",
+                    oneToSevenDays: "1-7 ቀናት",
+                    moreThanWeek: "ከአንድ ሳምንት በላይ",
+                    chestPain: "የደረት ሕመም",
+                    headache: "ራስ ምታት / የራስ ሕመም",
+                    stomachPain: "የሆድ / የጨጓራ ሕመም",
+                    backPain: "የጀርባ ሕመም",
+                    jointPain: "የመገጣጠሚያ / የጡንቻ ሕመም",
+                    fever: "ትኩሳት",
+                    cough: "ሳል",
+                    nausea: "ማቅለሽለሽ / ማስታወክ",
+                    fatigue: "ከፍተኛ ድካም",
+                    dizziness: "ራስ ማዞር / ሚዛን ማጣት",
+                    pelviPain: "የማህፀን / የታችኛው ሆድ ሕመም",
+                    breastPain: "የጡት ሕመም",
+                    abnormalBleeding: "ያልተለመደ የደም መፍሰስ",
+                    discharge: "ያልተለመደ የፈሳሽ መውጣት",
+                    confidenceText: "የመተማመን ደረጃ",
+                    important: "⚠️ አስፈላጊ ማስታወቂያ:",
+                    medicalDisclaimer: "ይህ በ AI የተጎላበተ የግምገማ መሣሪያ ነው እናም ትክክለኛውን የባለሙያ የሕክምና ምርመራ መተካት የለበትም። እባክዎን ለትክክለኛ ምርመራ እና ሕክምና ከጤና እንክብካቤ አቅራቢ ጋር ያማክሩ።",
+                    returnButton: "ወደ ዋናው ገጽ ተመለስ"
+                }
+            };
+
+            // DYNAMIC TRANSLATION DICTIONARIES FOR THE SYSTEM DIAGNOSIS CALCULATOR CALIBRATIONS
+            const medicalDatabase = {
+                en: {
+                    chest: { name: "Angina / Heart Condition", description: "Chest pain can indicate cardiac issues. Seek immediate medical attention.", recommendations: "• Seek immediate medical attention\n• Avoid strenuous activities\n• Monitor vital signs\n• Contact emergency services if severe" },
+                    head: { name: "Migraine or Tension Headache", description: "Headaches can result from stress, tension, or migraines.", recommendations: "• Rest in a dark, quiet room\n• Stay hydrated\n• Try relaxation techniques\n• Consider over-the-counter pain relievers" },
+                    stomach: { name: "Gastritis or Indigestion", description: "Stomach pain can be caused by gastritis, ulcers, or indigestion.", recommendations: "• Eat light, bland foods\n• Avoid spicy/fatty foods\n• Stay hydrated\n• Consider antacids" },
+                    back: { name: "Muscle Strain or Herniated Disc", description: "Back pain can result from muscle strain, poor posture, or spinal issues.", recommendations: "• Rest and avoid heavy lifting\n• Apply heat therapy\n• Do gentle stretches\n• Practice good posture" },
+                    pelvis: { name: "Pelvic Inflammatory Disease (PID)", description: "Pelvic pain can indicate infection or inflammation of reproductive organs.", recommendations: "• Consult gynecologist immediately\n• Rest and avoid intercourse\n• Take prescribed antibiotics\n• Monitor for fever" },
+                    breast: { name: "Fibrocystic Breast Disease or Hormonal Imbalance", description: "Breast pain can be hormonal, cyclical, or related to benign conditions.", recommendations: "• Wear supportive bra\n• Avoid caffeine\n• Consider warm compresses\n• Consult with gynecologist" }
+                },
+                am: {
+                    chest: { name: "የልብ ህመም (Angina) / የልብ ሁኔታ", description: "የደረት ህመም የልብ ችግሮችን ሊያመለክት ይችላል። ወዲያውኑ የህክምና እርዳታ ያግኙ።", recommendations: "• አስቸኳይ የህክምና እርዳታ ይፈልጉ\n• አجهካኝ እንቅስቃሴዎችን ያስወግዱ\n• የህይወት ምልክቶችን (Vital signs) ይከታተሉ\n• ህመሙ ከተባባሰ የአደጋ ጊዜ አገልግሎቶችን ያግኙ" },
+                    head: { name: "ማይግሬን (Migraine) ወይም የውጥረት ራስ ምታት", description: "ራስ ምታት ከጭንቀት፣ ከውጥረት ወይም ከማይግሬን ሊነሳ ይችላል።", recommendations: "• በጨለማ እና ጸጥ ባለ ክፍል ውስጥ ያርፉ\n• በቂ ውሃ ይጠጡ\n• ዘና የሚያደርጉ ቴክኒኮችን ይሞክሩ\n• ያለሀኪም ትዕዛዝ የሚሸጡ የህመም ማስታገሻዎችን ይውሰዱ" },
+                    stomach: { name: "የጨጓራ ህመም (Gastritis) ወይም የምግብ አለመፈጨት", description: "የሆድ ህመም በጨጓራ እብጠት፣ በቁስለት ወይም በምግብ አለመፈጨት ምክንያት ሊከሰት ይችላል።", recommendations: "• ቀላል እና ቅባት የሌላቸው ምግቦችን ይመገቡ\n• በቅመም የተበከሉ ምግቦችን ያስወግዱ\n• በቂ ፈሳሽ ይውሰዱ\n• የጨጓራ ማስታገሻዎችን (Antacids) ያስቡበት" },
+                    back: { name: "የጡንቻ መወጠር ወይም የዲስክ መንሸራተት", description: "የጀርባ ህመም በጡንቻ መወጠር፣ ባልተስተካከለ አቀማመጥ ወይም በአከርካሪ አጥንት ችግሮች ሊመጣ ይችላል።", recommendations: "• እረፍት ያድርጉ እና ከባድ ነገሮችን ከማንሳት ይቆጠቡ\n• የሞቀ ውሃ ሕክምና (Heat therapy) ይጠቀሙ\n• ቀለል ያሉ አካል ማራዘሚያዎችን ያድርጉ\n• ትክክለኛ የሰውነት አቀማመጥን ይለማመዱ" },
+                    pelvis: { name: "የማህፀን ኢንፌክሽን / የማህፀን አካላት እብጠት (PID)", description: "የማህፀን ህመም የመራቢያ አካላት ኢንፌክሽን ወይም እብጠትን ሊያመለክት ይችላል።", recommendations: "• ወዲያውኑ የማህፀን ሐኪም ያማክሩ\n• እረፍት ያድርጉ እና የግብረ ስጋ ግንኙነትን ያስወግዱ\n• የታዘዙ አንቲባዮቲኮችን ይውሰዱ\n• ትኩሳት መኖሩን ይከታተሉ" },
+                    breast: { name: "የጡት እብጠት በሽታ ወይም የሆርሞን መዛባት", description: "የጡት ህመም ከሆርሞን፣ ከወር አበባ ዑደት ወይም ከሌሎች አደገኛ ካልሆኑ እብጠቶች ጋር የተያያዘ ሊሆን ይችላል።", recommendations: "• ደጋፊ የሆነ የጡት ማስያዣ (Bra) ይልበሱ\n• ካፌይን ያላቸውን ነገሮች ያስወግዱ\n• የሞቀ ውሃ መጭመቂያ ይጠቀሙ\n• ከማህፀን ሐኪም ጋር ያማክሩ" }
+                }
+            };
+
+            function switchLanguage(lang) {
+                currentLanguage = lang;
+                
+                // Update buttons active status
+                document.querySelectorAll(".language-btn").forEach(btn => {
+                    btn.classList.remove("active");
+                });
+                event.target.classList.add("active");
+
+                // Update header text elements
+                document.getElementById("titleText").textContent = translations[lang].title;
+                document.getElementById("subtitleText").textContent = translations[lang].subtitle;
+                
+                // Update gender selection section text 
+                const genderHeader = document.querySelector("#genderSelection h3");
+                if (genderHeader) {
+                    genderHeader.textContent = translations[lang].selectGender;
+                }
+
+                const genderButtons = document.querySelectorAll(".gender-btn");
+                if (genderButtons[0]) genderButtons[0].textContent = `👨 ${translations[lang].male}`;
+                if (genderButtons[1]) genderButtons[1].textContent = `👩 ${translations[lang].female}`;
+
+                // Update configuration labels for the emergency banner setup
+                const emergencyBanner = document.querySelector(".emergency-banner");
+                if (emergencyBanner) {
+                    emergencyBanner.textContent = translations[lang].disclaimer;
+                }
+
+                // Update symptom section titles
+                const maleTitle = document.querySelector("#maleDiagnosis .symptom-title");
+                const femaleTitle = document.querySelector("#femaleDiagnosis .symptom-title");
+                if (maleTitle) maleTitle.textContent = `👨 ${translations[lang].maleAssessment}`;
+                if (femaleTitle) femaleTitle.textContent = `👩 ${translations[lang].femaleAssessment}`;
+
+                // Update male form labels layout
+                document.getElementById("maleLocationLabel").textContent = translations[lang].locationLabel;
+                document.getElementById("maleSymptomsLabel").textContent = translations[lang].symptomsLabel;
+                document.getElementById("maleDurationLabel").textContent = translations[lang].durationLabel;
+                document.getElementById("maleSeverityLabel").textContent = translations[lang].severityLabel;
+
+                // Update male checkboxes data values
+                updateLabelText("m_chest_label", translations[lang].chestPain);
+                updateLabelText("m_headache_label", translations[lang].headache);
+                updateLabelText("m_stomach_label", translations[lang].stomachPain);
+                updateLabelText("m_back_label", translations[lang].backPain);
+                updateLabelText("m_joint_label", translations[lang].jointPain);
+                updateLabelText("m_fever_label", translations[lang].fever);
+                updateLabelText("m_cough_label", translations[lang].cough);
+                updateLabelText("m_nausea_label", translations[lang].nausea);
+                updateLabelText("m_fatigue_label", translations[lang].fatigue);
+                updateLabelText("m_dizziness_label", translations[lang].dizziness);
+                updateLabelText("m_acute_label", translations[lang].lessThan24h);
+                updateLabelText("m_recent_label", translations[lang].oneToSevenDays);
+                updateLabelText("m_chronic_label", translations[lang].moreThanWeek);
+
+                // Update female form labels layout
+                document.getElementById("femaleLocationLabel").textContent = translations[lang].locationLabel;
+                document.getElementById("femaleSymptomsLabel").textContent = translations[lang].symptomsLabel;
+                document.getElementById("femaleDurationLabel").textContent = translations[lang].durationLabel;
+                document.getElementById("femaleSeverityLabel").textContent = translations[lang].severityLabel;
+
+                // Update female checkboxes data values
+                updateLabelText("f_chest_label", translations[lang].chestPain);
+                updateLabelText("f_headache_label", translations[lang].headache);
+                updateLabelText("f_stomach_label", translations[lang].stomachPain);
+                updateLabelText("f_pelvis_label", translations[lang].pelviPain);
+                updateLabelText("f_breast_label", translations[lang].breastPain);
+                updateLabelText("f_fever_label", translations[lang].fever);
+                updateLabelText("f_bleeding_label", translations[lang].abnormalBleeding);
+                updateLabelText("f_nausea_label", translations[lang].nausea);
+                updateLabelText("f_discharge_label", translations[lang].discharge);
+                updateLabelText("f_fatigue_label", translations[lang].fatigue);
+                updateLabelText("f_acute_label", translations[lang].lessThan24h);
+                updateLabelText("f_recent_label", translations[lang].oneToSevenDays);
+                updateLabelText("f_chronic_label", translations[lang].moreThanWeek);
+
+                // Update global action framework triggers buttons
+                document.querySelectorAll(".btn-submit").forEach(btn => {
+                    btn.textContent = translations[lang].diagnosisButton;
+                });
+
+                document.querySelectorAll(".btn-back").forEach(btn => {
+                    btn.textContent = translations[lang].backButton;
+                });
+
+                // Update result screen layout controls buttons
+                const returnBtn = document.querySelector("[onclick='location.href=\"main.html\"']");
+                if (returnBtn) returnBtn.textContent = translations[lang].returnButton;
+
+                const retryBtn = document.querySelector("[onclick='retakeDiagnosis()']");
+                if (retryBtn) retryBtn.textContent = translations[lang].retryButton;
+
+                // Update active diagnostic output window if state data holds valid
+                if (activeDiagnosisData) {
+                    const localKey = activeDiagnosisData.key;
+                    const confidence = activeDiagnosisData.confidence;
+                    
+                    const translatedTextData = medicalDatabase[lang][localKey];
+                    document.getElementById("diseaseName").textContent = translatedTextData.name;
+                    document.getElementById("confidenceScore").textContent = `${confidence}% ${translations[lang].confidenceText}`;
+                    document.getElementById("diseaseDescription").textContent = translatedTextData.description;
+                    document.getElementById("recommendations").textContent = translatedTextData.recommendations;
+                }
+
+                // Update result container text structures
+                const disclaimer = document.querySelector(".disclaimer");
+                if (disclaimer) {
+                    disclaimer.innerHTML = `<strong>${translations[lang].important}</strong> ${translations[lang].medicalDisclaimer}`;
+                }
+
+                const recsContainer = document.querySelector(".recommendations strong");
+                if (recsContainer) {
+                    recsContainer.textContent = translations[lang].recommendations;
+                }
+            }
+
+            function updateLabelText(id, text) {
+                const element = document.getElementById(id);
+                if (element) element.textContent = text;
+            }
+
+            function selectGender(gender) {
+                currentGender = gender;
+                document.querySelectorAll(".gender-btn").forEach(btn => {
+                    btn.classList.remove("active");
+                });
+                event.target.classList.add("active");
+
+                document.getElementById("genderSelection").style.display = "none";
+                document.getElementById(gender + "Diagnosis").classList.add("active");
+            }
+
+            function setSeverity(btn, inputId, value) {
+                btn.parentElement.querySelectorAll("button").forEach(b => {
+                    b.classList.remove("selected");
+                });
+                btn.classList.add("selected");
+                document.getElementById(inputId).value = value;
+            }
+
+            function submitDiagnosis(event, gender) {
+                event.preventDefault();
+                const form = gender === "male" ? document.getElementById("maleForm") : document.getElementById("femaleForm");
+                
+                const locations = Array.from(form.querySelectorAll('input[name="location"]:checked')).map(x => x.value);
+                const symptoms = Array.from(form.querySelectorAll('input[name="symptoms"]:checked')).map(x => x.value);
+                const duration = form.querySelector('input[name="duration"]:checked').value;
+                const severity = parseInt(form.querySelector('input[name="severity"]').value);
+
+                calculateDiagnosis(gender, locations, symptoms, duration, severity);
+            }
+
+            function calculateDiagnosis(gender, locations, symptoms, duration, severity) {
+                let primaryLocation = locations[0] || "head";
+                
+                // Fallback default routing check safety parameters
+                if (gender === 'female' && primaryLocation === 'joint') primaryLocation = 'head';
+                if (gender === 'male' && (primaryLocation === 'pelvis' || primaryLocation === 'breast')) primaryLocation = 'head';
+
+                let confidence = 50;
+                if (locations.length > 0) confidence += 15;
+                if (symptoms.length > 0) confidence += 15;
+                if (duration === "chronic") confidence += 10;
+                if (severity >= 4) confidence += 10;
+
+                // Adjust combinations score variations metrics
+                if (locations.includes("chest") && symptoms.includes("fever")) confidence = Math.min(95, confidence + 15);
+                if (locations.includes("stomach") && symptoms.includes("nausea")) confidence = Math.min(90, confidence + 10);
+                if (locations.includes("head") && duration === "chronic") confidence = Math.min(85, confidence + 5);
+
+                const finalConfidence = Math.min(confidence, 99);
+
+                // Cache metrics internally for language changes safely
+                activeDiagnosisData = {
+                    key: primaryLocation,
+                    confidence: finalConfidence
+                };
+
+                // Trigger runtime visual screen updates mapping configuration updates
+                showResults();
+            }
+
+            function showResults() {
+                document.querySelectorAll(".symptom-section").forEach(section => {
+                    section.classList.remove("active");
+                });
+
+                const localKey = activeDiagnosisData.key;
+                const confidence = activeDiagnosisData.confidence;
+                const currentData = medicalDatabase[currentLanguage][localKey];
+
+                document.getElementById("diseaseName").textContent = currentData.name;
+                document.getElementById("confidenceScore").textContent = `${confidence}% ${translations[currentLanguage].confidenceText}`;
+                document.getElementById("confidenceFill").style.width = confidence + "%";
+                document.getElementById("diseaseDescription").textContent = currentData.description;
+                document.getElementById("recommendations").textContent = currentData.recommendations;
+
+                // Re-sync basic structural text
+                const disclaimer = document.querySelector(".disclaimer");
+                if (disclaimer) {
+                    disclaimer.innerHTML = `<strong>${translations[currentLanguage].important}</strong> ${translations[currentLanguage].medicalDisclaimer}`;
+                }
+                document.querySelector(".recommendations strong").textContent = translations[currentLanguage].recommendations;
+
+                document.getElementById("resultContainer").classList.add("active");
+            }
+
+            function retakeDiagnosis() {
+                currentGender = null;
+                activeDiagnosisData = null;
+                document.querySelectorAll(".gender-btn").forEach(btn => btn.classList.remove("active"));
+                document.querySelectorAll(".symptom-section").forEach(section => section.classList.remove("active"));
+                document.getElementById("resultContainer").classList.remove("active");
+                document.getElementById("genderSelection").style.display = "block";
+                document.getElementById("maleForm").reset();
+                document.getElementById("femaleForm").reset();
+                document.querySelectorAll(".severity-btn").forEach(b => b.classList.remove("selected"));
+            }
+
+            function goHome() {
+                window.location.href = "main.html";
+            }
+        </script>
+    </body>
+</html>

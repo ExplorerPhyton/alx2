@@ -1,0 +1,976 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>VitaFlow Hub</title>
+        <style>
+            /* Global Styles */
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            }
+            body {
+                background-color: #f4f7f6;
+                color: #333;
+                line-height: 1.6;
+                padding-bottom: 60px;
+            }
+
+            /* Header Navigation */
+            header {
+                background: #2c3e50;
+                color: white;
+                padding: 1rem 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+            }
+            .logo h2 {
+                color: #1abc9c;
+                cursor: pointer;
+            }
+            nav {
+                display: flex;
+                align-items: center;
+            }
+            nav button {
+                background: none;
+                border: none;
+                color: white;
+                margin-left: 20px;
+                font-weight: bold;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: color 0.3s;
+            }
+            nav button:hover {
+                color: #1abc9c;
+            }
+            .auth-btn {
+                background: #1abc9c;
+                padding: 8px 16px;
+                border-radius: 4px;
+            }
+            .auth-btn:hover {
+                background: #16a085;
+                color: white;
+            }
+
+            .language-selector {
+                display: flex;
+                gap: 5px;
+                margin-left: 20px;
+            }
+
+            .language-btn {
+                padding: 4px 10px;
+                border: 1px solid #ecf0f1;
+                background: #f8f9fa;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 0.8rem;
+                transition: all 0.3s;
+                color: #2c3e50;
+            }
+
+            .language-btn.active {
+                background: #1abc9c;
+                color: white;
+                border-color: #1abc9c;
+            }
+
+            /* Hero Section */
+            .hero {
+                background:
+                    linear-gradient(
+                        rgba(44, 62, 80, 0.85),
+                        rgba(44, 62, 80, 0.85)
+                    ),
+                    url("https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=80")
+                        no-repeat center center/cover;
+                color: white;
+                text-align: center;
+                padding: 80px 20px;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+                margin-bottom: 10px;
+            }
+            .hero p {
+                font-size: 1.2rem;
+                color: #bdc3c7;
+            }
+
+            /* Container Pages */
+            .container {
+                max-width: 1000px;
+                margin: 40px auto;
+                padding: 0 20px;
+                min-height: 50vh;
+            }
+            .page {
+                display: none;
+                background: white;
+                padding: 40px;
+                border-radius: 8px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            }
+            .page.active {
+                display: block;
+                animation: fadeIn 0.4s ease;
+            }
+
+            /* Sign-In Component Styling */
+            .auth-box {
+                max-width: 450px;
+                margin: 20px auto;
+                padding: 30px;
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+                background: #fff;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            }
+            .auth-box h3 {
+                text-align: center;
+                color: #2c3e50;
+                margin-bottom: 20px;
+            }
+            .auth-toggle {
+                text-align: center;
+                margin-top: 15px;
+                font-size: 0.9rem;
+                color: #7f8c8d;
+            }
+            .auth-toggle span {
+                color: #1abc9c;
+                cursor: pointer;
+                font-weight: bold;
+            }
+            .auth-toggle span:hover {
+                text-decoration: underline;
+            }
+
+            /* Quote of the Day Card */
+            .quote-box {
+                background: linear-gradient(135deg, #e0f2f1, #e8f5e9);
+                border-left: 5px solid #1abc9c;
+                padding: 20px;
+                border-radius: 6px;
+                margin-bottom: 30px;
+                text-align: center;
+            }
+            .quote-box h4 {
+                color: #16a085;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin-bottom: 5px;
+                font-size: 0.85rem;
+            }
+            .quote-text {
+                font-style: italic;
+                font-size: 1.2rem;
+                color: #2c3e50;
+                font-weight: 500;
+            }
+            .quote-author {
+                display: block;
+                margin-top: 8px;
+                font-size: 0.9rem;
+                color: #7f8c8d;
+                font-weight: bold;
+            }
+
+            /* MAIN HOME DASHBOARD GRID */
+            .dashboard-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 30px;
+                margin-top: 20px;
+                margin-bottom: 40px;
+            }
+            .nav-card {
+                background: white;
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+                padding: 30px;
+                text-align: center;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+                transition:
+                    transform 0.3s,
+                    box-shadow 0.3s;
+                cursor: pointer;
+            }
+            .nav-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+                border-color: #1abc9c;
+            }
+            .nav-card h3 {
+                color: #2c3e50;
+                margin-bottom: 15px;
+                font-size: 1.4rem;
+            }
+            .nav-card p {
+                color: #7f8c8d;
+                margin-bottom: 20px;
+                font-size: 0.95rem;
+            }
+            .nav-btn {
+                background: #1abc9c;
+                color: white;
+                border: none;
+                padding: 12px 25px;
+                font-size: 1rem;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+                width: 100%;
+                transition: background 0.3s;
+            }
+            .nav-btn:hover {
+                background: #16a085;
+            }
+
+            /* Extra Main Page Content: Articles Section */
+            .articles-section {
+                margin-top: 40px;
+            }
+            .articles-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 20px;
+                margin-top: 15px;
+            }
+            .article-card {
+                background: #f9f9f9;
+                border-radius: 6px;
+                padding: 20px;
+                border-top: 3px solid #3498db;
+            }
+            .article-card h4 {
+                color: #2c3e50;
+                margin-bottom: 8px;
+            }
+            .article-card p {
+                font-size: 0.85rem;
+                color: #666;
+            }
+
+            /* Floating AI Bot Logo */
+            .ai-bot-widget {
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                width: 60px;
+                height: 60px;
+                background: #1abc9c;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                box-shadow: 0 4px 15px rgba(26, 188, 156, 0.4);
+                cursor: pointer;
+                transition:
+                    transform 0.3s,
+                    background-color 0.3s;
+                z-index: 9999;
+            }
+            .ai-bot-widget:hover {
+                transform: scale(1.1);
+                background: #16a085;
+            }
+            .ai-bot-widget svg {
+                width: 30px;
+                height: 30px;
+                fill: white;
+            }
+
+            /* Forms & Inputs */
+            .form-group {
+                margin-bottom: 20px;
+            }
+            label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: bold;
+                color: #2c3e50;
+            }
+            select,
+            input[type="text"],
+            input[type="email"],
+            input[type="password"] {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 1rem;
+            }
+
+            /* Mind Quiz Specific Styles */
+            .quiz-question {
+                margin-bottom: 25px;
+                background: #f9f9f9;
+                padding: 20px;
+                border-left: 4px solid #3498db;
+                border-radius: 4px;
+            }
+            .radio-group {
+                display: flex;
+                gap: 20px;
+                margin-top: 10px;
+            }
+            .radio-group label {
+                font-weight: normal;
+                cursor: pointer;
+            }
+
+            /* Psychiatrist Directory & Checkout Templates */
+            .doctor-card {
+                border: 1px solid #e0e0e0;
+                padding: 20px;
+                margin-bottom: 15px;
+                border-radius: 6px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #fafafa;
+            }
+            .price {
+                font-size: 1.3rem;
+                font-weight: bold;
+                color: #27ae60;
+            }
+            .payment-box {
+                max-width: 400px;
+                margin: 20px auto;
+                padding: 25px;
+                border: 2px dashed #27ae60;
+                background: #fafffa;
+                border-radius: 6px;
+                text-align: center;
+            }
+
+            /* Subscription Tiers */
+            .tier-container {
+                display: flex;
+                gap: 20px;
+                justify-content: center;
+                flex-wrap: wrap;
+                margin-top: 20px;
+            }
+            .tier-card {
+                flex: 1;
+                max-width: 350px;
+                min-width: 280px;
+                border: 1px solid #ddd;
+                padding: 30px;
+                border-radius: 6px;
+                text-align: center;
+                background: #fff;
+                position: relative;
+            }
+            .tier-card.premium {
+                border-color: #f1c40f;
+                box-shadow: 0 4px 15px rgba(241, 196, 15, 0.2);
+            }
+            .badge {
+                background: #f1c40f;
+                color: #333;
+                padding: 4px 12px;
+                font-size: 0.8rem;
+                position: absolute;
+                top: -12px;
+                left: 50%;
+                transform: translateX(-50%);
+                border-radius: 10px;
+                font-weight: bold;
+            }
+
+            /* Footer Element */
+            footer {
+                background: #2c3e50;
+                color: #bdc3c7;
+                text-align: center;
+                padding: 40px 20px;
+                margin-top: 60px;
+                font-size: 0.9rem;
+                border-top: 4px solid #1abc9c;
+            }
+            .emergency-banner {
+                background: #e74c3c;
+                color: white;
+                padding: 12px;
+                text-align: center;
+                font-weight: bold;
+                font-size: 0.95rem;
+            }
+
+            /* Basic Animation */
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="logo" onclick="showPage('home')"><h2>VitaFlow</h2></div>
+            <nav>
+                <button id="navHome" onclick="showPage('home')">Home Dashboard</button>
+                <button id="navTrad" onclick="showPage('traditional')">Traditional Medicine</button>
+                <button id="navDiag" onclick="window.location.href='diagnosis.html'">Physical Diagnosis</button>
+                <button id="navQuiz" onclick="showPage('quiz-page')">Mind Quiz</button>
+                <button id="navSubs" onclick="showPage('subscriptions')">Subscriptions</button>
+                <button id="navAuthBtn" class="auth-btn" onclick="showPage('auth-page')">Sign In</button>
+                <div class="language-selector">
+                    <button class="language-btn active" onclick="switchLanguage('en')">EN</button>
+                    <button class="language-btn" onclick="switchLanguage('am')">አማ</button>
+                </div>
+            </nav>
+        </header>
+
+        <div class="emergency-banner" id="emergencyBanner">
+            ⚠️ Immediate Crisis Notice: If you are experiencing a severe health or mental health emergency, please dial your local emergency response numbers immediately.
+        </div>
+
+        <div class="hero">
+            <h1 id="heroTitle">Welcome to VitaFlow Portal</h1>
+            <p id="heroSubtitle">Select an option below to begin managing your health pathways.</p>
+        </div>
+
+        <div class="container">
+            <!-- Home Dashboard -->
+            <div id="home" class="page active">
+                <div class="quote-box">
+                    <h4 id="quoteHeader">Biological Quote of the Day</h4>
+                    <p id="dailyQuote" class="quote-text">"Loading today's biological insight..."</p>
+                    <span id="dailyAuthor" class="quote-author"></span>
+                </div>
+
+                <h2 style="text-align: center; margin-bottom: 30px" id="portalSelectionTitle">Select Your Destination Portal</h2>
+
+                <div class="dashboard-grid">
+                    <div class="nav-card" onclick="showPage('traditional')">
+                        <h3 id="cardTradTitle">🌿 Traditional Medicine</h3>
+                        <p id="cardTradDesc">Enter your primary systemic conditions or diseases to fetch localized organic remedies and guided video streams.</p>
+                        <button class="nav-btn" id="cardTradBtn">Open Remedies Page</button>
+                    </div>
+
+                    <div class="nav-card" onclick="showPage('quiz-page')">
+                        <h3 id="cardQuizTitle">🧠 Mental Health Quiz</h3>
+                        <p id="cardQuizDesc">Our core 5-question evaluation checker tool. Connect directly with professional psychiatric services and checkout pages.</p>
+                        <button class="nav-btn" style="background: #3498db" id="cardQuizBtn">Start Mind Quiz</button>
+                    </div>
+
+                    <div class="nav-card" onclick="window.location.href='diagnosis.html'">
+                        <h3 id="cardDiagTitle">🩺 Physical Diagnosis</h3>
+                        <p id="cardDiagDesc">Answer questions about your symptoms and pain location to receive an AI-powered diagnosis assessment with confidence scores.</p>
+                        <button class="nav-btn" style="background: #e74c3c" id="cardDiagBtn">Start Diagnosis</button>
+                    </div>
+
+                    <div class="nav-card" onclick="showPage('subscriptions')">
+                        <h3 id="cardSubsTitle">💎 Accounts & Premium</h3>
+                        <p id="cardSubsDesc">Modify, adjust, update, or clear your platform subscription options and recurring billing tier features.</p>
+                        <button class="nav-btn" style="background: #9b59b6" id="cardSubsBtn">View Tiers</button>
+                    </div>
+                </div>
+
+                <div class="articles-section">
+                    <h3 id="trendingTitle">📖 Trending Wellness Reads</h3>
+                    <div class="articles-grid">
+                        <div class="article-card">
+                            <h4 id="art1Title">Circadian Biology</h4>
+                            <p id="art1Desc">Discover how balancing internal cellular clocks with natural sunlight drastically optimizes daily energy cycles.</p>
+                        </div>
+                        <div class="article-card" style="border-top-color: #1abc9c">
+                            <h4 id="art2Title">The Gut-Mind Axis</h4>
+                            <p id="art2Desc">Exploring how biological gut biomes interact chemically with central nervous patterns to dictate emotional baselines.</p>
+                        </div>
+                        <div class="article-card" style="border-top-color: #9b59b6">
+                            <h4 id="art3Title">Adaptogen Profiles</h4>
+                            <p id="art3Desc">A closer scientific assessment of roots used in holistic systems to decrease daily strain and physical stress responses.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auth Page -->
+            <div id="auth-page" class="page">
+                <div class="auth-box">
+                    <div id="signInContainer">
+                        <h3 id="loginTitle">Welcome Back</h3>
+                        <form id="signInForm" onsubmit="handleAuthAction(event, 'login')">
+                            <div class="form-group">
+                                <label id="loginEmailLabel">Email Address</label>
+                                <input type="email" placeholder="name@domain.com" required />
+                            </div>
+                            <div class="form-group">
+                                <label id="loginPwdLabel">Password</label>
+                                <input type="password" placeholder="••••••••" required />
+                            </div>
+                            <button type="submit" class="nav-btn" id="loginSubmitBtn">Sign Into Account</button>
+                        </form>
+                        <div class="auth-toggle" id="loginToggleText">
+                            Don't have an account? <span onclick="toggleAuthForms(true)">Create one here</span>
+                        </div>
+                    </div>
+
+                    <div id="signUpContainer" style="display: none">
+                        <h3 id="signupTitle">Create Workspace Account</h3>
+                        <form id="signUpForm" onsubmit="handleAuthAction(event, 'register')">
+                            <div class="form-group">
+                                <label id="signupNameLabel">Full Name</label>
+                                <input type="text" placeholder="Alex Smith" required />
+                            </div>
+                            <div class="form-group">
+                                <label id="signupEmailLabel">Email Address</label>
+                                <input type="email" placeholder="name@domain.com" required />
+                            </div>
+                            <div class="form-group">
+                                <label id="signupPwdLabel">Create Password</label>
+                                <input type="password" placeholder="Minimum 6 characters" required />
+                            </div>
+                            <button type="submit" class="nav-btn" style="background: #3498db" id="signupSubmitBtn">Complete Registration</button>
+                        </form>
+                        <div class="auth-toggle" id="signupToggleText">
+                            Already have an profile setup? <span onclick="toggleAuthForms(false)">Sign In</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Traditional Medicine Page -->
+            <div id="traditional" class="page">
+                <h2 id="tradPageTitle">🌿 Traditional Medicine Finder</h2>
+                <p style="margin-bottom: 20px; color: #7f8c8d" id="tradPageDesc">Select a recorded condition profile to pull verified traditional remedies and instructional links.</p>
+
+                <form id="traditionalForm">
+                    <div class="form-group">
+                        <label for="symptom" id="tradFormLabel">Select Your Disease or Symptom Profile:</label>
+                        <select id="symptom" required>
+                            <option value="" id="optDefault">-- Click to choose an option --</option>
+                            <option value="digestive" id="optDigestive">Indigestion & Severe Bloating</option>
+                            <option value="sleep" id="optSleep">Insomnia & Persistent Restlessness</option>
+                            <option value="fatigue" id="optFatigue">Chronic Low Energy & Fatigue</option>
+                        </select>
+                    </div>
+                    <button type="button" class="nav-btn" onclick="findTraditionalRemedy()" id="tradSubmitBtn">Generate Remedy Data</button>
+                </form>
+
+                <div id="traditionalResult" style="margin-top: 30px; padding: 20px; background: #e8f8f5; border-radius: 6px; display: none;">
+                    <h4 id="remedyTitle" style="color: #117a65; font-size: 1.2rem"></h4>
+                    <p id="remedyDesc" style="margin: 15px 0"></p>
+                    <p>
+                        <strong id="eduResourceText">Educational Resource:</strong>
+                        <a id="remedyLink" href="#" target="_blank" style="color: #1abc9c; font-weight: bold">Watch external video guides and tutorials here &rarr;</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Mind Quiz Page -->
+            <div id="quiz-page" class="page">
+                <h2 id="quizPageTitle">🧠 Mental Health Check-In Quiz</h2>
+                <p style="margin-bottom: 20px; color: #7f8c8d" id="quizPageDesc">Complete these 5 critical questions accurately regarding your behaviors over the last 14 days.</p>
+
+                <form id="mindQuiz">
+                    <div class="quiz-question">
+                        <label id="lblQ1">1. Experiencing little interest or pleasure in doing normal routine hobbies?</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="q1" value="0" required /><span class="optNotAtAll">Not at all</span></label>
+                            <label><input type="radio" name="q1" value="1" /><span class="optSeveralDays">Several days</span></label>
+                            <label><input type="radio" name="q1" value="2" /><span class="optMostDays">Most days</span></label>
+                        </div>
+                    </div>
+
+                    <div class="quiz-question">
+                        <label id="lblQ2">2. Feeling down, depressed, flat, or noticeably hopeless?</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="q2" value="0" required /><span class="optNotAtAll">Not at all</span></label>
+                            <label><input type="radio" name="q2" value="1" /><span class="optSeveralDays">Several days</span></label>
+                            <label><input type="radio" name="q2" value="2" /><span class="optMostDays">Most days</span></label>
+                        </div>
+                    </div>
+
+                    <div class="quiz-question">
+                        <label id="lblQ3">3. Experiencing trouble staying asleep, falling asleep, or oversleeping?</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="q3" value="0" required /><span class="optNotAtAll">Not at all</span></label>
+                            <label><input type="radio" name="q3" value="1" /><span class="optSeveralDays">Several days</span></label>
+                            <label><input type="radio" name="q3" value="2" /><span class="optMostDays">Most days</span></label>
+                        </div>
+                    </div>
+
+                    <div class="quiz-question">
+                        <label id="lblQ4">4. Experiencing general lethargy, low physical drive, or running low on energy?</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="q4" value="0" required /><span class="optNotAtAll">Not at all</span></label>
+                            <label><input type="radio" name="q4" value="1" /><span class="optSeveralDays">Several days</span></label>
+                            <label><input type="radio" name="q4" value="2" /><span class="optMostDays">Most days</span></label>
+                        </div>
+                    </div>
+
+                    <div class="quiz-question">
+                        <label id="lblQ5">5. Trouble focusing or concentrating on reading, text, or screens?</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="q5" value="0" required /><span class="optNotAtAll">Not at all</span></label>
+                            <label><input type="radio" name="q5" value="1" /><span class="optSeveralDays">Several days</span></label>
+                            <label><input type="radio" name="q5" value="2" /><span class="optMostDays">Most days</span></label>
+                        </div>
+                    </div>
+
+                    <button type="button" class="nav-btn" style="background: #3498db" onclick="evaluateQuiz()" id="quizSubmitBtn">Submit Mind Evaluation</button>
+                </form>
+
+                <div id="quizHealthyResult" style="margin-top: 30px; padding: 25px; background: #e8f8f5; border-radius: 6px; text-align: center; display: none;">
+                    <h3 style="color: #27ae60" id="healthyResultTitle">Your baseline scores look healthy!</h3>
+                    <p id="healthyResultDesc">Continue maintaining a robust routine, consistent sleep metrics, and regular mental breaks.</p>
+                </div>
+
+                <div id="quizDirectoryResult" style="margin-top: 30px; padding: 25px; background: #fdf2e9; border-radius: 6px; display: none;">
+                    <h3 style="color: #d35400; margin-bottom: 15px" id="careRoutingTitle">Professional Care Routing Required</h3>
+                    <p style="margin-bottom: 20px" id="careRoutingDesc">Your score suggests you may be going through a tough time. Please pick an authorized professional from our panel below to proceed to booking:</p>
+
+                    <div class="doctor-list">
+                        <div class="doctor-card">
+                            <div>
+                                <h4>Dr. Sarah Jenkins, MD</h4>
+                                <p><small id="doc1Specialty">Board Certified Clinical Psychiatrist</small></p>
+                            </div>
+                            <div>
+                                <span class="price">$120</span>
+                                <button class="nav-btn selectPayBtn" style="width: auto; padding: 8px 20px; margin-left: 15px;" onclick="goToFinance('Dr. Sarah Jenkins', 120)">Select & Pay</button>
+                            </div>
+                        </div>
+
+                        <div class="doctor-card">
+                            <div>
+                                <h4>Dr. Aaron Patel, PsyD</h4>
+                                <p><small id="doc2Specialty">Anxiety & Stress Management Specialist</small></p>
+                            </div>
+                            <div>
+                                <span class="price">$95</span>
+                                <button class="nav-btn selectPayBtn" style="width: auto; padding: 8px 20px; margin-left: 15px;" onclick="goToFinance('Dr. Aaron Patel', 95)">Select & Pay</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="financePage" style="margin-top: 30px; padding: 25px; background: #f4f6f6; border: 1px solid #ccc; border-radius: 6px; display: none;">
+                    <h3 style="color: #2c3e50; border-bottom: 2px solid #27ae60; padding-bottom: 10px;" id="checkoutTitle">💳 Gateway Checkout Page</h3>
+                    <p id="checkoutDetails" style="margin: 20px 0; font-weight: bold; color: #2c3e50;"></p>
+
+                    <div class="payment-box">
+                        <p style="margin-bottom: 15px; font-weight: bold; color: #27ae60;" id="sandboxTitle">Secure Credit Card Transaction Sandbox</p>
+                        <input type="text" placeholder="Cardholder Name Details" id="inputHolderName" style="margin-bottom: 12px" />
+                        <input type="text" placeholder="#### #### #### ####" style="margin-bottom: 12px" />
+                        <button type="button" class="nav-btn" style="background: #27ae60" onclick="processPayment()" id="processPaymentBtn">Process Payment Gateway</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscriptions Page -->
+            <div id="subscriptions" class="page">
+                <h2 id="subsPageTitle">💎 Manage/Update Premium Subscriptions</h2>
+                <p style="color: #7f8c8d" id="subsPageDesc">Modify your current portal setup parameters or update tiers easily here.</p>
+
+                <div class="tier-container">
+                    <div class="tier-card">
+                        <h3 id="tierFreeTitle">Free Tier Profile</h3>
+                        <p style="font-size: 1.8rem; margin: 20px 0;"><strong>$0</strong> <span class="perMonthText">/ month</span></p>
+                        <p style="font-size: 0.9rem; color: #777; margin-bottom: 25px;" id="tierFreeDesc">Includes base questionnaires and general local listings.</p>
+                        <button class="nav-btn activeTierBtn" style="background: #7f8c8d; cursor: default">Active Tier</button>
+                    </div>
+                    <div class="tier-card premium">
+                        <div class="badge" id="premiumChoiceBadge">PREMIUM CHOICE</div>
+                        <h3 id="tierPremiumTitle">Plus Plan Membership</h3>
+                        <p style="font-size: 1.8rem; margin: 20px 0; color: #27ae60;"><strong>$14.99</strong> <span class="perMonthText">/ month</span></p>
+                        <p style="font-size: 0.9rem; color: #777; margin-bottom: 25px;" id="tierPremiumDesc">Unlocks video database directories, remedy clips, and priority matching.</p>
+                        <button class="nav-btn" style="background: #f1c40f; color: #333" onclick="alert('Redirecting to stripe subscription dashboard...')" id="tierPremiumBtn">Update/Renew Subscription</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ai-bot-widget" onclick="toggleAiBot()" title="Chat with Assistant">
+            <svg viewbox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4M12,18C8.67,18 5.82,15.91 4.67,13H19.33C18.18,15.91 15.33,18 12,18M9,11A1,1 0 0,1 8,10A1,1 0 0,1 9,9A1,1 0 0,1 10,10A1,1 0 0,1 9,11M15,11A1,1 0 0,1 14,10A1,1 0 0,1 15,9A1,1 0 0,1 16,10A1,1 0 0,1 15,11Z"/></svg>
+        </div>
+
+        <footer>
+            <p style="font-size: 1.1rem; margin-bottom: 10px"><strong>VitaFlow International Systems Inc.</strong></p>
+            <p id="footerSupport">Support Telephone Helpdesk: <strong>+1 (555) 019-2834</strong> | System Email: <strong>support@vitaflowportal.com</strong></p>
+            <p style="margin-top: 20px; font-size: 0.8rem; color: #95a5a6" id="footerCopy">&copy; 2026 VitaFlow. Frontend architecture prototype environment. Designed for Firebase integration.</p>
+        </footer>
+
+        <script>
+            let currentLanguage = "en";
+
+            const bioQuotes = {
+                en: [
+                    { text: "“Nothing in biology makes sense except in the light of evolution.”", author: "Theodosius Dobzhansky" },
+                    { text: "“The cell is the basic structural, functional, and biological unit of all known organisms.”", author: "Cell Theory Principle" },
+                    { text: "“Biology is the study of complicated things that have the appearance of having been designed for a purpose.”", author: "Richard Dawkins" },
+                    { text: "“In nature, nothing exists alone. Systemic feedback regulates all biological networks.”", author: "Rachel Carson" },
+                    { text: "“DNA is a ledger containing history, instructions, and design structures for organic pathways.”", author: "Genomics Research" }
+                ],
+                am: [
+                    { text: "“ከዝግመተ ለውጥ አንጻር ካልታየ በቀር በባዮሎጂ ውስጥ ምንም ትርጉም የሚሰጥ ነገር የለም።”", author: "ቴዎዶሲየስ ዶብዝሃንስኪ" },
+                    { text: "“ሴል የማንኛውም የታወቁ ሕያዋን ፍጥረታት መሠረታዊ መዋቅራዊ፣ ተግባራዊ እና ባዮሎጂያዊ ክፍል ነው።”", author: "የሴል ቲዎሪ መርህ" },
+                    { text: "“ባዮሎጂ ለአንድ ዓላማ ተብለው የተቀረጹ የሚመስሉ ውስብስብ ነገሮችን የሚያጠና ሳይንስ ነው።”", author: "ሪቻርድ ዶኪንስ" },
+                    { text: "“ከተፈጥሮ ውጭ ምንም ነገር ለብቻው አይኖርም። የስርዓት ግብረመልስ ሁሉንም ባዮሎጂያዊ አውታረ መረቦች ይቆጣጠራል።”", author: "ራቸል ካርሰን" },
+                    { text: "“ዲ ኤን ኤ ታሪክን፣ መመሪያዎችን እና ለኦርጋኒክ መንገዶች ንድፎችን የያዘ መዝገብ ነው።”", author: "የጂኖሚክስ ምርምር" }
+                ]
+            };
+
+            const translations = {
+                en: {
+                    navHome: "Home Dashboard", navTrad: "Traditional Medicine", navDiag: "Physical Diagnosis", navQuiz: "Mind Quiz", navSubs: "Subscriptions", navAuthBtn: "Sign In",
+                    emergencyBanner: "⚠️ Immediate Crisis Notice: If you are experiencing a severe health or mental health emergency, please dial your local emergency response numbers immediately.",
+                    heroTitle: "Welcome to VitaFlow Portal", heroSubtitle: "Select an option below to begin managing your health pathways.",
+                    quoteHeader: "Biological Quote of the Day", portalSelectionTitle: "Select Your Destination Portal",
+                    cardTradTitle: "🌿 Traditional Medicine", cardTradDesc: "Enter your primary systemic conditions or diseases to fetch localized organic remedies and guided video streams.", cardTradBtn: "Open Remedies Page",
+                    cardQuizTitle: "🧠 Mental Health Quiz", cardQuizDesc: "Our core 5-question evaluation checker tool. Connect directly with professional psychiatric services and checkout pages.", cardQuizBtn: "Start Mind Quiz",
+                    cardDiagTitle: "🩺 Physical Diagnosis", cardDiagDesc: "Answer questions about your symptoms and pain location to receive an AI-powered diagnosis assessment with confidence scores.", cardDiagBtn: "Start Diagnosis",
+                    cardSubsTitle: "💎 Accounts & Premium", cardSubsDesc: "Modify, adjust, update, or clear your platform subscription options and recurring billing tier features.", cardSubsBtn: "View Tiers",
+                    trendingTitle: "📖 Trending Wellness Reads",
+                    art1Title: "Circadian Biology", art1Desc: "Discover how balancing internal cellular clocks with natural sunlight drastically optimizes daily energy cycles.",
+                    art2Title: "The Gut-Mind Axis", art2Desc: "Exploring how biological gut biomes interact chemically with central nervous patterns to dictate emotional baselines.",
+                    art3Title: "Adaptogen Profiles", art3Desc: "A closer scientific assessment of roots used in holistic systems to decrease daily strain and physical stress responses.",
+                    loginTitle: "Welcome Back", loginEmailLabel: "Email Address", loginPwdLabel: "Password", loginSubmitBtn: "Sign Into Account", loginToggleText: "Don't have an account? Create one here",
+                    signupTitle: "Create Workspace Account", signupNameLabel: "Full Name", signupEmailLabel: "Email Address", signupPwdLabel: "Create Password", signupSubmitBtn: "Complete Registration", signupToggleText: "Already have an profile setup? Sign In",
+                    tradPageTitle: "🌿 Traditional Medicine Finder", tradPageDesc: "Select a recorded condition profile to pull verified traditional remedies and instructional links.",
+                    tradFormLabel: "Select Your Disease or Symptom Profile:", optDefault: "-- Click to choose an option --", optDigestive: "Indigestion & Severe Bloating", optSleep: "Insomnia & Persistent Restlessness", optFatigue: "Chronic Low Energy & Fatigue", tradSubmitBtn: "Generate Remedy Data",
+                    eduResourceText: "Educational Resource:", remedyLinkText: "Watch external video guides and tutorials here &rarr;",
+                    quizPageTitle: "🧠 Mental Health Check-In Quiz", quizPageDesc: "Complete these 5 critical questions accurately regarding your behaviors over the last 14 days.",
+                    lblQ1: "1. Experiencing little interest or pleasure in doing normal routine hobbies?", lblQ2: "2. Feeling down, depressed, flat, or noticeably hopeless?", lblQ3: "3. Experiencing trouble staying asleep, falling asleep, or oversleeping?", lblQ4: "4. Experiencing general lethargy, low physical drive, or running low on energy?", lblQ5: "5. Trouble focusing or concentrating on reading, text, or screens?",
+                    optNotAtAll: "Not at all", optSeveralDays: "Several days", optMostDays: "Most days", quizSubmitBtn: "Submit Mind Evaluation",
+                    healthyResultTitle: "Your baseline scores look healthy!", healthyResultDesc: "Continue maintaining a robust routine, consistent sleep metrics, and regular mental breaks.",
+                    careRoutingTitle: "Professional Care Routing Required", careRoutingDesc: "Your score suggests you may be going through a tough time. Please pick an authorized professional from our panel below to proceed to booking:",
+                    doc1Specialty: "Board Certified Clinical Psychiatrist", doc2Specialty: "Anxiety & Stress Management Specialist", selectPayBtnText: "Select & Pay",
+                    checkoutTitle: "💳 Gateway Checkout Page", sandboxTitle: "Secure Credit Card Transaction Sandbox", inputHolderName: "Cardholder Name Details", processPaymentBtn: "Process Payment Gateway",
+                    subsPageTitle: "💎 Manage/Update Premium Subscriptions", subsPageDesc: "Modify your current portal setup parameters or update tiers easily here.",
+                    tierFreeTitle: "Free Tier Profile", perMonthText: "/ month", tierFreeDesc: "Includes base questionnaires and general local listings.", activeTierBtnText: "Active Tier",
+                    premiumChoiceBadge: "PREMIUM CHOICE", tierPremiumTitle: "Plus Plan Membership", tierPremiumDesc: "Unlocks video database directories, remedy clips, and priority matching.", tierPremiumBtn: "Update/Renew Subscription",
+                    footerSupport: "Support Telephone Helpdesk: +1 (555) 019-2834 | System Email: support@vitaflowportal.com", footerCopy: "© 2026 VitaFlow. Frontend architecture prototype environment. Designed for Firebase integration.",
+                    alertFields: "Please answer all 5 criteria questions before submission.", alertCondition: "Please pick a condition parameter first.",
+                    digestiveTitle: "Suggested Herb: Ginger & Peppermint Concentrates", digestiveDesc: "Historically documented to minimize gastrointestinal discomfort, ease flatulence, and settle active tracking issues.",
+                    sleepTitle: "Suggested Herb: Extracted Chamomile with Valerian Compounds", sleepDesc: "Valerian works as an organic sedative compound to down-regulate nervous activity, accelerating sleep cycle onset.",
+                    fatigueTitle: "Suggested Herb: Organic Ashwagandha Extract", fatigueDesc: "An adaptogenic agent engineered to regulate overactive adrenal spikes and lower baseline exhaustion rates."
+                },
+                am: {
+                    navHome: "ዋና ዳሽቦርድ", navTrad: "ባህላዊ ሕክምና", navDiag: "የአካል ምርመራ", navQuiz: "የአእምሮ ፈተና", navSubs: "ምዝገባዎች", navAuthBtn: "ግባ",
+                    emergencyBanner: "⚠️ አስቸኳይ የአደጋ ማስታወቂያ፡ ከባድ የጤና ወይም የአእምሮ ጤና እክል እያጋጠመዎት ከሆነ እባክዎን ወዲያውኑ የአካባቢዎን የአደጋ ጊዜ ቁጥሮች ይደውሉ።",
+                    heroTitle: "ወደ ቪታፍሎው (VitaFlow) ፖርታል እንኳን ደህና መጡ", heroSubtitle: "የጤና ጉዞዎን ማስተዳደር ለመጀመር ከታች ካሉት አማራጮች አንዱን ይምረጡ።",
+                    quoteHeader: "የዕለቱ ባዮሎጂያዊ ጥቅስ", portalSelectionTitle: "መድረሻ ገጽዎን ይምረጡ",
+                    cardTradTitle: "🌿 ባህላዊ ሕክምና", cardTradDesc: "ለአካባቢው ተስማሚ የሆኑ የተፈጥሮ መፍትሄዎችን እና የመማሪያ ቪዲዮዎችን ለማግኘት ዋና ዋና የሰውነት ሁኔታዎችን ወይም በሽታዎችን ያስገቡ።", cardTradBtn: "የመፍትሄዎች ገጽን ክፈት",
+                    cardQuizTitle: "🧠 የአእምሮ ጤና ፈተና", cardQuizDesc: "የእኛ ዋና ባለ 5-ጥያቄዎች መገምገሚያ መሣሪያ። በቀጥታ ከባለሙያ የአእምሮ ሐኪሞች አገልግሎት እና የክፍያ ገጾች ጋር ይገናኙ።", cardQuizBtn: "የአእምሮ ፈተና ጀምር",
+                    cardDiagTitle: "🩺 የአካል ምርመራ", cardDiagDesc: "የ AI የክሊኒካዊ ትንበያ ግምገማን ለማግኘት ስለ ምልክቶችዎ እና ስለ ህመምዎ ቦታ ጥያቄዎችን ይመልሱ።", cardDiagBtn: "ምርመራ ጀምር",
+                    cardSubsTitle: "💎 መለያዎች እና ፕሪሚየም", cardSubsDesc: "የአላplatform ምዝገባ አማራጮችን እና ተደጋጋሚ የክፍያ ደረጃዎችን ያሻሽሉ፣ ያስተካክሉ ወይም ያጽዱ።", cardSubsBtn: "ደረጃዎችን ይመልከቱ",
+                    trendingTitle: "📖 በብዛት የሚነበቡ የጤና ጽሑፎች",
+                    art1Title: "የሰርካዲያን ባዮሎጂ (Circadian Biology)", art1Desc: "የውስጥ ሴሉላር ሰዓቶችን ከተፈጥሮ የፀሐይ ብርሃን ጋር ማመጣጠን የዕለት ተዕለት የኃይል ዑደትን እንዴት እንደሚያሻሽል ይወቁ።",
+                    art2Title: "የአንጀት-አእምሮ ትስስር", art2Desc: "ባዮሎጂያዊ የአንጀት ሥነ-ምህዳሮች የስሜት መሠረቶችን ለመወሰን ከማዕከላዊ ነርቭ ሥርዓት ጋር በኬሚካል እንዴት እንደሚገናኙ ማሰስ።",
+                    art3Title: "የአዳፕቶጅን መገለጫዎች (Adaptogen)", art3Desc: "የዕለት ተዕለት ውጥረትን እና የአካል ጉዳት ምላሾችን ለመቀነስ በባህላዊ ሕክምናዎች ውስጥ ጥቅም ላይ የሚውሉትን የእፅዋት ሥሮች የቅርብ ሳይንሳዊ ግምገማ።",
+                    loginTitle: "እንኳን ደህና መጡ", loginEmailLabel: "የኢሜል አድራሻ", loginPwdLabel: "የይለፍ ቃል", loginSubmitBtn: "ወደ መለያ ይግቡ", loginToggleText: "መለያ የለዎትም? እዚህ ይፍጠሩ",
+                    signupTitle: "አዲስ መለያ ይፍጠሩ", signupNameLabel: "ሙሉ ስም", signupEmailLabel: "የኢሜል አድራሻ", signupPwdLabel: "የይለፍ ቃል ይፍጠሩ", signupSubmitBtn: "ምዝገባውን ያጠናቅቁ", signupToggleText: "አስቀድመው መለያ አለዎት? ይግቡ",
+                    tradPageTitle: "🌿 ባህላዊ ሕክምና ፈላጊ", tradPageDesc: "የተረጋገጡ ባህላዊ መፍትሄዎችን እና የመማሪያ አገናኞችን ለማውጣት የተቀመጠውን የበሽታ መገለጫ ይምረጡ።",
+                    tradFormLabel: "የበሽታዎን ወይም የምልክትዎን መገለጫ ይምረጡ፡", optDefault: "-- አማራጭ ለመምረጥ እዚህ ይጫኑ --", optDigestive: "የምግብ አለመፈጨት እና ከባድ የሆድ መነፋት", optSleep: "የእንቅልፍ ማጣት እና የማያቋርጥ እረፍት ማጣት", optFatigue: "የከረረ ከፍተኛ የድካም ስሜት", tradSubmitBtn: "የመፍትሄ መረጃን አውጣ",
+                    eduResourceText: "የትምህርት መርጃዎች:", remedyLinkText: "ውጫዊ የቪዲዮ መመሪያዎችን እና ትምህርቶችን እዚህ ይመልከቱ &rarr;",
+                    quizPageTitle: "🧠 የአእምሮ ጤና ክትትል ፈተና", quizPageDesc: "ባለፉት 14 ቀናት ውስጥ ስለነበሩዎት ባህሪያት እነዚህን 5 ወሳኝ ጥያቄዎች በትክክል ያጠናቅቁ።",
+                    lblQ1: "1. የተለመዱ የትርፍ ጊዜ ማሳለፊያዎችን ለማድረግ ፍላጎት ማጣት ወይም ደስታ ማጣት?", lblQ2: "2. የመንፈስ መውረድ፣ የመጨነቅ፣ የመደበር ወይም ተስፋ የመቁረጥ ስሜት?", lblQ3: "3. እንቅልፍ የመተኛት ችግር፣ እንቅልፍ ማቋረጥ ወይም ከልክ በላይ መተኛት?", lblQ4: "4. አጠቃላይ የድካም ስሜት፣ ዝቅተኛ የአካል ተነሳሽነት ወይም የኃይል እጥረት?", lblQ5: "5. ንባብ፣ ጽሑፎች ወይም ስክሪኖች ላይ የማተኮር ችግር?",
+                    optNotAtAll: "በፍፁም", optSeveralDays: "ለአንዳንድ ቀናት", optMostDays: "ለአብዛኛዎቹ ቀናት", quizSubmitBtn: "የአእምሮ ግምገማውን አስገባ",
+                    healthyResultTitle: "የእርስዎ መነሻ ውጤቶች ጤናማ ይመስላሉ!", healthyResultDesc: "ጠንካራ የዕለት ተዕለት እንቅስቃሴን፣ ወጥ የሆነ የእንቅልፍ መለኪያዎችን እና መደበኛ የአእምሮ እረፍቶችን ማድረጉን ይቀጥሉ።",
+                    careRoutingTitle: "የባለሙያ እንክብካቤ ማግኘት ያስፈልጋል", careRoutingDesc: "የእርስዎ ውጤት በአስቸጋሪ ሁኔታ ውስጥ እያለፉ ሊሆን እንደሚችል ያሳያል። እባክዎን ለመመዝገብ ከታች ካለው ዝርዝር ውስጥ ፈቃድ ያለው ባለሙያ ይምረጡ፡",
+                    doc1Specialty: "በቦርድ የተረጋገጠ ክሊኒካዊ የአእምሮ ሐኪም", doc2Specialty: "የጭንቀት እና የውጥረት አያያዝ ልዩ ባለሙያ", selectPayBtnText: "ይምረጡ እና ይክፈሉ",
+                    checkoutTitle: "💳 ደህንነቱ የተጠበቀ የክፍያ ገጽ", sandboxTitle: "ደህንነቱ የተጠበቀ የክሬዲት ካርድ ግብይት መሞከሪያ", inputHolderName: "የካርድ ባለቤት ሙሉ ስም", processPaymentBtn: "ክፍያውን ፈጽም",
+                    subsPageTitle: "💎 የፕሪሚየም ምዝገባዎችን ያስተዳድሩ/ያድሱ", subsPageDesc: "የአሁኑን የፖርታል ቅንጅቶችዎን ያስተካክሉ ወይም ደረጃዎችን በቀላሉ እዚህ ያድሱ።",
+                    tierFreeTitle: "ነፃ ደረጃ", perMonthText: "/ በወር", tierFreeDesc: "መሠረታዊ መጠይቆችን እና አጠቃላይ የአካባቢ ዝርዝሮችን ያካትታል።", activeTierBtnText: "አሁን እየሰሩበት ያለው ደረጃ",
+                    premiumChoiceBadge: "ምርጥ ምርጫ", tierPremiumTitle: "የፕላስ ዕቅድ አባልነት", tierPremiumDesc: "የቪዲዮ ዳታቤዝ ማውጫዎችን፣ የመፍትሄ ክሊፖችን እና ቅድሚያ የሚሰጣቸውን ተዛማጆችን ይከፍታል።", tierPremiumBtn: "ምዝገባን አዘምን/አድስ",
+                    footerSupport: "የቴክኒክ ድጋፍ ስልክ መስመር፡ +1 (555) 019-2834 | የስርዓት ኢሜል፡ support@vitaflowportal.com", footerCopy: "© 2026 VitaFlow. የፊት-መጨረሻ አርክቴክቸር ቅድመ-ዕይታ። ለፌርቤዝ ውህደት የተነደፈ።",
+                    alertFields: "እባክዎን ከማስገባትዎ በፊት ሁሉንም 5 ጥያቄዎች ይመልሱ።", alertCondition: "እባክዎን በመጀመሪያ የበሽታውን ሁኔታ ይምረጡ።",
+                    digestiveTitle: "የሚመከር እፅዋት፡ የጅንጅብል እና የፔፐርሚንት ድብልቅ", digestiveDesc: "የምግብ መፈጨት ችግርን ለመቀነስ፣ የሆድ መነፋትን ለማስታገስ እና ንቁ የሆኑ የክትትል ችግሮችን ለመፍታት በታሪክ የተመዘገበ።",
+                    sleepTitle: "የሚመከር እፅዋት፡ የካሞሚል (Chamomile) እና የቫለሪያን (Valerian) ውህድ", sleepDesc: "ቫለሪያን የነርቭ እንቅስቃሴን በመቀነስ እንቅልፍ በፍጥነት እንዲመጣ ለማድረግ እንደ ተፈጥሯዊ ማረጋጊያ ሆኖ ይሰራል ።",
+                    fatigueTitle: "የሚመከር እፅዋት፡ ኦርጋኒክ የአሽዋጋንዳ (Ashwagandha) ጭማቂ", fatigueDesc: "ከመጠን በላይ የነቃ የአድሬናል መጨመርን ለመቆጣጠር እና መሰረታዊ የድካም መጠኖችን ለመቀነስ የተነደፈ አዳፕቶጂን ወኪል።"
+                }
+            };
+
+            function switchLanguage(lang) {
+                currentLanguage = lang;
+                
+                // Update active state inside layout buttons
+                document.querySelectorAll(".language-btn").forEach(btn => btn.classList.remove("active"));
+                if (event && event.target) {
+                    event.target.classList.add("active");
+                }
+
+                // Header Navigation & Titles
+                const keys = Object.keys(translations[lang]);
+                keys.forEach(key => {
+                    const el = document.getElementById(key);
+                    if (el) {
+                        if (el.tagName === "INPUT" && el.hasAttribute("placeholder")) {
+                            el.setAttribute("placeholder", translations[lang][key]);
+                        } else {
+                            el.textContent = translations[lang][key];
+                        }
+                    }
+                });
+
+                // Update text elements grouped inside repetitive custom class queries
+                document.querySelectorAll(".optNotAtAll").forEach(el => el.textContent = translations[lang].optNotAtAll);
+                document.querySelectorAll(".optSeveralDays").forEach(el => el.textContent = translations[lang].optSeveralDays);
+                document.querySelectorAll(".optMostDays").forEach(el => el.textContent = translations[lang].optMostDays);
+                document.querySelectorAll(".selectPayBtn").forEach(el => el.textContent = translations[lang].selectPayBtnText);
+                document.querySelectorAll(".perMonthText").forEach(el => el.textContent = translations[lang].perMonthText);
+                document.querySelectorAll(".activeTierBtn").forEach(el => el.textContent = translations[lang].activeTierBtnText);
+
+                // Update standard direct link elements
+                const rLink = document.getElementById("remedyLink");
+                if (rLink) rLink.innerHTML = translations[lang].remedyLinkText;
+
+                // Reload the active parsed day quote language array structure
+                loadDailyQuote();
+                
+                // Refresh remedies section output text if visible 
+                const symptom = document.getElementById("symptom").value;
+                if(symptom) {
+                    findTraditionalRemedy();
+                }
+            }
+
+            function loadDailyQuote() {
+                const today = new Date();
+                const quoteIndex = today.getDate() % bioQuotes[currentLanguage].length;
+                document.getElementById("dailyQuote").innerText = bioQuotes[currentLanguage][quoteIndex].text;
+                document.getElementById("dailyAuthor").innerText = `- ${bioQuotes[currentLanguage][quoteIndex].author}`;
+            }
+
+            window.onload = function () {
+                loadDailyQuote();
+            };
+
+            function showPage(pageId) {
+                const pages = document.querySelectorAll(".page");
+                pages.forEach((page) => page.classList.remove("active"));
+
+                const targetPage = document.getElementById(pageId);
+                if (targetPage) {
+                    targetPage.classList.add("active");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+            }
+
+            function toggleAuthForms(showSignUp) {
+                if (showSignUp) {
+                    document.getElementById("signInContainer").style.display = "none";
+                    document.getElementById("signUpContainer").style.display = "block";
+                } else {
+                    document.getElementById("signInContainer").style.display = "block";
+                    document.getElementById("signUpContainer").style.display = "none";
+                }
+            }
+
+            function handleAuthAction(event, type) {
+                event.preventDefault();
+                document.getElementById("navAuthBtn").innerText = currentLanguage === "en" ? "Logged In" : "ገብተዋል";
+                document.getElementById("navAuthBtn").style.background = "#27ae60";
+                alert(type === "login" 
+                    ? (currentLanguage === "en" ? "Logged in successfully!" : "በተሳካ ሁኔታ ገብተዋል!") 
+                    : (currentLanguage === "en" ? "Account created successfully!" : "መለያ በተሳካ ሁኔታ ተፈጥሯል!")
+                );
+                showPage("home");
+            }
+
+            function toggleAiBot() {
+                alert(currentLanguage === "en" 
+                    ? "AI Helpdesk Module: This floating widget registers user triggers. Next step: Link this directly to your Firebase GenAI extension or chat UI layout panel!"
+                    : "የ AI እገዛ ሞጁል፡ ይህ ተንሳፋፊ መተግበሪያ የተጠቃሚ ፍላጎቶችን ይመዘግባል። የሚቀጥለው እርምጃ፡ ይህንን በቀጥታ ከእርስዎ Firebase GenAI ቅጥያ ወይም የውይይት በይነገጽ ፓነል ጋር ማገናኘት ነው!"
+                );
+            }
+
+            function findTraditionalRemedy() {
+                const symptom = document.getElementById("symptom").value;
+                const resultBox = document.getElementById("traditionalResult");
+                const title = document.getElementById("remedyTitle");
+                const desc = document.getElementById("remedyDesc");
+                const link = document.getElementById("remedyLink");
+
+                if (!symptom) {
+                    alert(translations[currentLanguage].alertCondition);
+                    return;
+                }
+
+                resultBox.style.display = "block";
+
+                if (symptom === "digestive") {
+                    title.innerText = translations[currentLanguage].digestiveTitle;
+                    desc.innerText = translations[currentLanguage].digestiveDesc;
+                    link.href = "https://www.youtube.com/results?search_query=how+to+make+ginger+peppermint+tea+medicinal";
+                } else if (symptom === "sleep") {
+                    title.innerText = translations[currentLanguage].sleepTitle;
+                    desc.innerText = translations[currentLanguage].sleepDesc;
+                    link.href = "https://www.youtube.com/results?search_query=herbal+remedies+for+insomnia+deep+sleep";
+                } else if (symptom === "fatigue") {
+                    title.innerText = translations[currentLanguage].fatigueTitle;
+                    desc.innerText = translations[currentLanguage].fatigueDesc;
+                    link.href = "https://www.youtube.com/results?search_query=adaptogen+herbs+for+energy+ashwagandha";
+                }
+            }
+
+            function evaluateQuiz() {
+                const form = document.getElementById("mindQuiz");
+                const q1 = form.elements["q1"] ? parseInt(form.elements["q1"].value) : null;
+                const q2 = form.elements["q2"] ? parseInt(form.elements["q2"].value) : null;
+                const q3 = form.elements["q3"] ? parseInt(form.elements["q3"].value) : null;
+                const q4 = form.elements["q4"] ? parseInt(form.elements["q4"].value) : null;
+                const q5 = form.elements["q5"] ? parseInt(form.elements["q5"].value) : null;
+
+                if (isNaN(q1) || isNaN(q2) || isNaN(q3) || isNaN(q4) || isNaN(q5)) {
+                    alert(translations[currentLanguage].alertFields);
+                    return;
+                }
+
+                const totalScore = q1 + q2 + q3 + q4 + q5;
+
+                document.getElementById("quizHealthyResult").style.display = "none";
+                document.getElementById("quizDirectoryResult").style.display = "none";
+                document.getElementById("financePage").style.display = "none";
+
+                if (totalScore >= 3) {
+                    document.getElementById("quizDirectoryResult").style.display = "block";
+                    document.getElementById("quizDirectoryResult").scrollIntoView({ behavior: "smooth" });
+                } else {
+                    document.getElementById("quizHealthyResult").style.display = "block";
+                    document.getElementById("quizHealthyResult").scrollIntoView({ behavior: "smooth" });
+                }
+            }
+
+            function goToFinance(doctorName, fee) {
+                document.getElementById("financePage").style.display = "block";
+                document.getElementById("checkoutDetails").innerText = currentLanguage === "en"
+                    ? `Session Item Selection: ${doctorName} — Secure Billing Total: $${fee}.00`
+                    : `የክፍለ-ጊዜ ምርጫ፡ ${doctorName} — አስተማማኝ አጠቃላይ ክፍያ፡ $${fee}.00`;
+                document.getElementById("financePage").scrollIntoView({ behavior: "smooth" });
+            }
+
+            // SIMULATOR GATEWAY SUBMIT
+            function processPayment() {
+                alert(currentLanguage === "en"
+                    ? "Payment Processing Simulated Successfully! When you link this code with Firebase Cloud Functions later, this triggers your actual stripe transaction event."
+                    : "የክፍያ ሂደት በተሳካ ሁኔታ ተመስሏል! ይህንን ኮድ በኋላ ከFirebase Cloud Functions ጋር ሲያገናኙት፣ ይህ ትክክለኛውን የስትራይፕ (Stripe) ግብይት ክስተት ያነቃቃዋል።"
+                );
+            }
+        </script>
+    </body>
+</html>
